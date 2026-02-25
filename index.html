@@ -3,12 +3,43 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="alternate icon" href="favicon.ico" />
     <title>Galaretkowo</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>Galaretkowo</h1>
-    <p>Witamy w naszym sklepie z najlepszą galaretką z nóżek!</p>
+    <header class="hero">
+      <h1>Galaretkowo</h1>
+      <p>Najlepsza galaretka z nóżek w całej Polsce</p>
+      <button id="orderBtn">Zamów</button>
+      <p id="addedMsg" style="opacity: 0; transition: opacity 0.4s">Dodano!</p>
+    </header>
+
+    <section class="about fade-in">
+      <h2>O naszej galaretce</h2>
+      <p>
+        Tradycyjna, domowa galaretka z najwyższej jakości składników. Idealna na
+        święta, imprezy i codzienny obiad.
+      </p>
+    </section>
+
+    <section class="product fade-in">
+      <h2>Oferta</h2>
+      <div class="product-card">
+        <img src="img/galaretka.png" alt="Galaretka z nóżek" />
+        <h3>Galaretka klasyczna</h3>
+        <p>Porcja 450g</p>
+        <p class="price">18 zł</p>
+        <button id="addToCart">Dodaj do koszyka</button>
+      </div>
+    </section>
+
+    <section class="cart fade-in">
+      <h2>Koszyk</h2>
+      Dodane sztuki: <span id="count">0</span>
+    </section>
+
     <script src="app.js"></script>
   </body>
 </html>
