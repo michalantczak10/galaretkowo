@@ -92,18 +92,78 @@ button:active {
   display: inline-block;
 }
 
+#miniCount {
+  display: inline-block;
+}
+
 .bump {
   animation: bump 0.5s ease;
 }
 @keyframes bump {
   0% {
-    transform: scale(1.0);
+    transform: scale(1);
   }
   30% {
     transform: scale(1.5);
   }
   100% {
-    transform: scale(1.0);
+    transform: scale(1);
   }
 }
 
+.mini-cart {
+  position: fixed;
+  top: 20px;
+  right: 20px; /* reszta styli */
+}
+
+.mini-cart {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  padding: 10px 14px;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  z-index: 999;
+  transition: transform 0.2s ease;
+}
+.mini-cart:hover {
+  transform: scale(1.05);
+}
+.mini-cart-icon {
+  width: 28px;
+  height: 28px;
+}
+.mini-cart-count {
+  background: #b30000;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  display: inline-block;
+}
+.mini-cart-shake {
+  animation: miniShake 0.4s ease;
+}
+@keyframes miniShake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-3px);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+  75% {
+    transform: translateX(-3px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}

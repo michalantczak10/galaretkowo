@@ -15,6 +15,10 @@
       <button id="orderBtn">Zamów</button>
       <p id="addedMsg" style="opacity: 0; transition: opacity 0.4s">Dodano!</p>
     </header>
+    <div class="mini-cart">
+      <img src="img/cart.svg" alt="Koszyk" class="mini-cart-icon" />
+      <span class="mini-cart-count" id="miniCount">0</span>
+    </div>
 
     <section class="about fade-in">
       <h2>O naszej galaretce</h2>
@@ -37,7 +41,8 @@
 
     <section class="cart fade-in">
       <h2>Koszyk</h2>
-      Dodane sztuki: <span id="count">0</span>
+      <p>Dodane sztuki: <span id="count">0</span></p>
+      <p>Razem do zapłaty: <span id="total">0</span> zł</p>
     </section>
 
     <script src="app.js"></script>
