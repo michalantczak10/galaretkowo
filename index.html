@@ -3,8 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    <link rel="alternate icon" href="favicon.ico" />
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <title>Galaretkowo</title>
     <link rel="stylesheet" href="style.css" />
   </head>
@@ -35,37 +38,66 @@
       </p>
     </section>
 
-    <section class="product fade-in">
-      <h2>Oferta</h2>
+<section class="product fade-in">
+  <h2>Oferta</h2>
 
-      <div class="product-card">
-        <img src="img/galaretka.png" alt="Galaretka klasyczna" />
-        <h3>Galaretka klasyczna</h3>
-        <p>Porcja 450g</p>
-        <p class="price">18 zł</p>
-        <button
-          class="addToCartBtn"
-          data-product="Galaretka klasyczna"
-          data-price="18"
-        >
-          Dodaj do koszyka
-        </button>
-      </div>
+  <!-- Kurczaczek -->
+  <div class="product-card">
+    <img src="img/kurczaczek.png" alt="Kurczaczek" />
+    <h3>Kurczaczek</h3>
+    <p>Galaretka drobiowa z warzywami</p>
+    <p class="price">18 zł</p>
+    <button class="addToCartBtn" data-product="Kurczaczek" data-price="18">
+      Dodaj do koszyka
+    </button>
+  </div>
 
-      <div class="product-card">
-        <img src="img/galaretka-drobiowa.png" alt="Galaretka drobiowa" />
-        <h3>Galaretka drobiowa</h3>
-        <p>Porcja 450g</p>
-        <p class="price">20 zł</p>
-        <button
-          class="addToCartBtn"
-          data-product="Galaretka drobiowa"
-          data-price="20"
-        >
-          Dodaj do koszyka
-        </button>
-      </div>
-    </section>
+  <!-- Kogucik -->
+  <div class="product-card">
+    <img src="img/kogucik.png" alt="Kogucik" />
+    <h3>Kogucik</h3>
+    <p>Galaretka drobiowa bez warzyw</p>
+    <p class="price">20 zł</p>
+    <button class="addToCartBtn" data-product="Kogucik" data-price="20">
+      Dodaj do koszyka
+    </button>
+  </div>
+
+  <!-- Prosiaczek -->
+  <div class="product-card">
+    <img src="img/prosiaczek.png" alt="Prosiaczek" />
+    <h3>Prosiaczek</h3>
+    <p>Galaretka wieprzowa z warzywami</p>
+    <p class="price">19 zł</p>
+    <button class="addToCartBtn" data-product="Prosiaczek" data-price="19">
+      Dodaj do koszyka
+    </button>
+  </div>
+
+  <!-- Dzika Świnia -->
+  <div class="product-card">
+    <img src="img/dzika-swinia.png" alt="Dzika Świnia" />
+    <h3>Dzika Świnia</h3>
+    <p>Galaretka wieprzowa bez warzyw</p>
+    <p class="price">22 zł</p>
+    <button class="addToCartBtn" data-product="Dzika Świnia" data-price="22">
+      Dodaj do koszyka
+    </button>
+  </div>
+
+  <!-- Warzywniak -->
+  <div class="product-card">
+    <img src="img/warzywniak.png" alt="Warzywniak" />
+    <h3>Warzywniak</h3>
+    <p>Galaretka warzywna na agarze</p>
+    <p class="price">17 zł</p>
+    <button class="addToCartBtn" data-product="Warzywniak" data-price="17">
+      Dodaj do koszyka
+    </button>
+  </div>
+
+</section>
+
 
     <script src="app.js"></script>
   </body>

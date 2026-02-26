@@ -1,6 +1,19 @@
-console.log("JS działa!");
 var count = 0;
 var PRICE = 18;
+var cart = [
+    { name: "Galaretka wieprzowa", price: 18, qty: 2 },
+    { name: "Galaretka drobiowa", price: 20, qty: 1 },
+    {
+        name: "Galaretka wieprzowa - DLA MIĘSOŻERCÓW (SAMO MIĘSO)",
+        price: 20,
+        qty: 2,
+    },
+    {
+        name: "Galaretka drobiowa - DLA MIĘSOŻERCÓW (SAMO MIĘSO)",
+        price: 22,
+        qty: 1,
+    },
+];
 // Pobranie elementów
 var addBtn = document.getElementById("addToCart");
 var orderBtn = document.getElementById("orderBtn");

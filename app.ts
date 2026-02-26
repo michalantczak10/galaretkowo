@@ -1,7 +1,20 @@
-console.log("JS działa!");
-
 let count = 0;
 const PRICE = 18;
+
+let cart = [
+  { name: "Galaretka wieprzowa", price: 18, qty: 2 },
+  { name: "Galaretka drobiowa", price: 20, qty: 1 },
+  {
+    name: "Galaretka wieprzowa - DLA MIĘSOŻERCÓW (SAMO MIĘSO)",
+    price: 20,
+    qty: 2,
+  },
+  {
+    name: "Galaretka drobiowa - DLA MIĘSOŻERCÓW (SAMO MIĘSO)",
+    price: 22,
+    qty: 1,
+  },
+];
 
 // Pobranie elementów
 const addBtn = document.getElementById("addToCart") as HTMLButtonElement;
@@ -35,5 +48,7 @@ addBtn.addEventListener("click", () => {
 
 // Kliknięcie "Zamów"
 orderBtn.addEventListener("click", () => {
-  alert("Dziękujemy za zainteresowanie! Zamówienia online będą dostępne wkrótce.");
+  alert(
+    "Dziękujemy za zainteresowanie! Zamówienia online będą dostępne wkrótce.",
+  );
 });
