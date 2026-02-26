@@ -14,18 +14,24 @@ const countSpan = document.getElementById("count") as HTMLSpanElement;
 const addBtn = document.getElementById("addToCart") as HTMLButtonElement;
 const orderBtn = document.getElementById("orderBtn") as HTMLButtonElement;
 
-const miniCart = document.querySelector(".mini-cart");
+const miniCart = document.querySelector(".mini-cart") as HTMLElement;
 const miniCount = document.getElementById("miniCount") as HTMLElement;
+const miniTotal = document.getElementById("miniTotal") as HTMLElement;
 
 addBtn.addEventListener("click", () => {
   const cartSection = document.querySelector(".cart") as HTMLElement;
-  cartSection.classList.remove("cart-shake");
+  cartSection.classList.remove("mini-cart-shake");
   void cartSection.offsetWidth;
   cartSection.classList.add("cart-shake");
+
+  miniCart.classList.remove("mini-cart-shake");
+  void miniCart.offsetWidth;
+  miniCart.classList.add("mini-cart-shake");
 
   count++;
 
   miniCount.textContent = count.toString();
+  miniTotal.textContent = (count * PRICE).toString();
   miniCount.classList.remove("bump");
   void miniCount.offsetWidth;
   miniCount.classList.add("bump");
@@ -34,6 +40,14 @@ addBtn.addEventListener("click", () => {
   countSpan.classList.remove("bump");
   void countSpan.offsetWidth;
   countSpan.classList.add("bump");
+
+  miniTotal.classList.remove("bump");
+  void miniTotal.offsetWidth;
+  miniTotal.classList.add("bump");
+
+  miniCart.classList.remove("mini-cart-pulse");
+  void miniCart.offsetWidth;
+  miniCart.classList.add("mini-cart-pulse");
 
   updateTotal();
 });
