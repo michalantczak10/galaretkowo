@@ -59,7 +59,7 @@ const customerNotes: HTMLTextAreaElement = customerNotesElement;
 // Stałe konfiguracyjne
 const STORAGE_KEY = "galaretkarnia_cart";
 const TOAST_DURATION = 2000;
-const ORDER_EMAIL = "zamowienia@galaretkarnia.pl";
+const API_URL = "https://galaretkarnia-api.onrender.com/api/orders"; // Backend API endpoint
 
 // Funkcja animacji - usuwa klasę, wymusza reflow i dodaje ponownie
 const animate = (el: HTMLElement, cls: string) => {
@@ -125,7 +125,7 @@ const renderCheckoutSummary = () => {
 
 const isPhoneValid = (phone: string) => /^[0-9+()\-\s]{7,20}$/.test(phone);
 
-const handleCheckoutSubmit = (event: SubmitEvent) => {
+const handleCheckoutSubmit = async (event: SubmitEvent) => {
   event.preventDefault();
 
   if (cart.length === 0) {
@@ -156,31 +156,58 @@ const handleCheckoutSubmit = (event: SubmitEvent) => {
     return;
   }
 
-  const itemsText = cart
-    .map(item => `- ${item.name}: ${item.qty} słoik(ów) × ${item.price} zł = ${item.qty * item.price} zł`)
-    .join("\n");
+  // Show loading state
+  setCheckoutMessage("⏳ Wysyłanie zamówienia...", false);
+  const submitBtn = checkoutForm.querySelector('button[type="submit"]') as HTMLButtonElement;
+  if (submitBtn) submitBtn.disabled = true;
 
-  const mailSubject = encodeURIComponent("Nowe zamówienie - Galaretkarnia.pl");
-  const mailBody = encodeURIComponent(
-    [
-      "Dzień dobry,",
-      "",
-      "chcę złożyć zamówienie:",
-      itemsText,
-      "",
-      `Do zapłaty: ${getCartTotalPrice()} zł`,
-      "",
-      "Dane klienta:",
-      `Imię i nazwisko: ${name}`,
-      `Telefon: ${phone}`,
-      `Adres dostawy: ${address}`,
-      `Uwagi: ${notes || "Brak"}`
-    ].join("\n")
-  );
+  try {
+    const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          phone,
+          address,
+          notes: notes || undefined,
+          items: cart,
+          total: getCartTotalPrice(),
+        }),
+      }
+    );
 
-  window.location.href = `mailto:${ORDER_EMAIL}?subject=${mailSubject}&body=${mailBody}`;
-  setCheckoutMessage("Otwarto wiadomość e-mail z gotowym zamówieniem.", false);
-  showToast("Przygotowano zamówienie do wysłania");
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Błąd przy wysyłaniu zamówienia");
+    }
+
+    // Success!
+    setCheckoutMessage(`✅ ${data.message}`, false);
+    showToast("Zamówienie przyjęte!");
+    
+    // Clear form
+    customerName.value = "";
+    customerPhone.value = "";
+    customerAddress.value = "";
+    customerNotes.value = "";
+    
+    // Clear cart
+    cart = [];
+    renderCart();
+    
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : "Nieznany błąd";
+    setCheckoutMessage(`❌ ${errorMsg}`, true);
+    showToast("Błąd przy wysyłaniu zamówienia");
+  } finally {
+    if (submitBtn) submitBtn.disabled = false;
+  }
 };
 
 // Funkcja usunięcia produktu z koszyka
