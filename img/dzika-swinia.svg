@@ -1,51 +1,56 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-  <defs>
-    <linearGradient id="brownGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#8B4513;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#5D2E1A;stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  
   <!-- Cień -->
-  <ellipse cx="100" cy="175" rx="65" ry="15" fill="#00000030"/>
+  <ellipse cx="100" cy="170" rx="60" ry="12" fill="#0000001a"/>
   
   <!-- Ciało dzika -->
-  <ellipse cx="100" cy="115" rx="65" ry="55" fill="url(#brownGrad)"/>
+  <ellipse cx="100" cy="110" rx="60" ry="50" fill="#6B4423"/>
+  
+  <!-- Plecy/grzbiet ciemniejszy -->
+  <ellipse cx="100" cy="95" rx="55" ry="35" fill="#5D3D1F" opacity="0.6"/>
   
   <!-- Głowa -->
-  <ellipse cx="90" cy="75" rx="38" ry="32" fill="url(#brownGrad)"/>
+  <ellipse cx="100" cy="70" rx="40" ry="35" fill="#6B4423"/>
   
-  <!-- Uszy szpiczaste -->
-  <path d="M 65 50 L 70 35 L 75 50 Z" fill="#654321"/>
-  <path d="M 105 50 L 110 35 L 115 50 Z" fill="#654321"/>
+  <!-- Uszy -->
+  <ellipse cx="75" cy="45" rx="10" ry="18" fill="#6B4423" transform="rotate(-25 75 45)"/>
+  <ellipse cx="125" cy="45" rx="10" ry="18" fill="#6B4423" transform="rotate(25 125 45)"/>
+  <ellipse cx="75" cy="48" rx="5" ry="10" fill="#5D3D1F" transform="rotate(-25 75 48)"/>
+  <ellipse cx="125" cy="48" rx="5" ry="10" fill="#5D3D1F" transform="rotate(25 125 48)"/>
   
-  <!-- Pysk z kłami -->
-  <ellipse cx="115" cy="80" rx="22" ry="18" fill="#704020"/>
-  <ellipse cx="122" cy="80" rx="10" ry="8" fill="#5D2E1A"/>
+  <!-- Pysk -->
+  <ellipse cx="115" cy="75" rx="22" ry="16" fill="#8B5A3C"/>
+  <ellipse cx="122" cy="75" rx="10" ry="8" fill="#7A4A2C"/>
+  
+  <!-- Nozdra -->
+  <circle cx="119" cy="72" r="2.5" fill="#000"/>
+  <circle cx="119" cy="78" r="2.5" fill="#000"/>
   
   <!-- Kły -->
-  <path d="M 120 88 L 118 100 L 122 100 Z" fill="#FFFACD"/>
-  <path d="M 130 88 L 128 98 L 132 98 Z" fill="#FFFACD"/>
+  <path d="M 116 83 L 114 98 L 119 95 Z" fill="#F5DEB3"/>
+  <path d="M 128 83 L 126 93 L 131 91 Z" fill="#F5DEB3"/>
   
-  <!-- Dziurki w nosie -->
-  <circle cx="119" cy="77" r="2" fill="#000"/>
-  <circle cx="119" cy="83" r="2" fill="#000"/>
+  <!-- Oczy -->
+  <circle cx="82" cy="62" r="4" fill="#000"/>
+  <circle cx="83" cy="61" r="1.5" fill="#fff"/>
+  <circle cx="108" cy="62" r="4" fill="#000"/>
+  <circle cx="109" cy="61" r="1.5" fill="#fff"/>
   
-  <!-- Oczy małe i groźne -->
-  <circle cx="80" cy="68" r="4" fill="#000"/>
-  <circle cx="81" cy="67" r="1.5" fill="#8B0000"/>
-  <circle cx="100" cy="68" r="4" fill="#000"/>
-  <circle cx="101" cy="67" r="1.5" fill="#8B0000"/>
+  <!-- Brwi/zmarszczki -->
+  <path d="M 78 58 Q 80 55 85 56" stroke="#5D3D1F" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M 115 56 Q 120 55 122 58" stroke="#5D3D1F" stroke-width="1.5" fill="none" stroke-linecap="round"/>
   
-  <!-- Grzywa/włosie -->
-  <path d="M 70 60 L 65 50 M 75 58 L 72 48 M 80 57 L 78 47 M 85 56 L 85 46" stroke="#3D2416" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Grzywa -->
+  <path d="M 75 52 L 70 38 M 80 50 L 77 36 M 85 49 L 83 34 M 90 48 L 88 33 M 95 48 L 93 32" stroke="#4A2F1A" stroke-width="2.5" stroke-linecap="round"/>
   
-  <!-- Nogi masywne -->
-  <rect x="65" y="145" width="15" height="30" rx="4" fill="#654321"/>
-  <rect x="120" y="145" width="15" height="30" rx="4" fill="#654321"/>
-  <rect x="65" y="170" width="15" height="8" rx="2" fill="#3D2416"/>
-  <rect x="120" y="170" width="15" height="8" rx="2" fill="#3D2416"/>
+  <!-- Nogi (grube) -->
+  <rect x="68" y="148" width="16" height="30" rx="5" fill="#6B4423"/>
+  <rect x="116" y="148" width="16" height="30" rx="5" fill="#6B4423"/>
   
-  <!-- Ogon kręty -->
-  <path d="M 165 115 Q 175 105 170 95 Q 168 88 175 85" stroke="#654321" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Kopyta -->
+  <ellipse cx="76" cy="178" rx="10" ry="5" fill="#4A2F1A"/>
+  <ellipse cx="124" cy="178" rx="10" ry="5" fill="#4A2F1A"/>
+  
+  <!-- Ogon -->
+  <path d="M 158 105 Q 175 92 175 75" stroke="#4A2F1A" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M 175 72 Q 173 68 176 64" stroke="#4A2F1A" stroke-width="3" fill="none" stroke-linecap="round"/>
 </svg>
