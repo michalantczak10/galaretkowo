@@ -1,5 +1,3 @@
-console.log("JS działa!");
-
 // Typ pojedynczego produktu w koszyku
 interface CartItem {
   name: string;
@@ -10,18 +8,36 @@ interface CartItem {
 // Tablica koszyka
 let cart: CartItem[] = [];
 
-// Pobranie elementów z HTML
+// Pobranie elementów z HTML z bezpieczną obsługą null
 const addButtons = document.querySelectorAll(".addToCartBtn") as NodeListOf<HTMLButtonElement>;
-const miniCart = document.querySelector(".mini-cart") as HTMLElement;
-const miniCount = document.getElementById("miniCount") as HTMLElement;
-const miniTotal = document.getElementById("miniTotal") as HTMLElement;
-const cartList = document.getElementById("cartList") as HTMLElement;
+const miniCartElement = document.querySelector(".mini-cart");
+const miniCountElement = document.getElementById("miniCount");
+const miniTotalElement = document.getElementById("miniTotal");
+const cartListElement = document.getElementById("cartList");
 
-// Funkcja animacji
+// Sprawdzenie czy wszystkie elementy istnieją
+if (!miniCartElement || !miniCountElement || !miniTotalElement || !cartListElement) {
+  console.error("Nie znaleziono wymaganych elementów DOM");
+  throw new Error("Brak wymaganych elementów na stronie");
+}
+
+// Przypisanie do zmiennych z pewnymi typami
+const miniCart: HTMLElement = miniCartElement as HTMLElement;
+const miniCount: HTMLElement = miniCountElement;
+const miniTotal: HTMLElement = miniTotalElement;
+const cartList: HTMLElement = cartListElement;
+
+// Funkcja animacji - usuwa klasę, wymusza reflow i dodaje ponownie
 const animate = (el: HTMLElement, cls: string) => {
   el.classList.remove(cls);
-  void el.offsetWidth;
+  void el.offsetWidth; // Wymusza reflow
   el.classList.add(cls);
+  
+  // Usunięcie klasy po zakończeniu animacji
+  const animationDuration = 500; // 500ms - najdłuższa animacja
+  setTimeout(() => {
+    el.classList.remove(cls);
+  }, animationDuration);
 };
 
 // Wyświetlanie listy produktów
@@ -40,11 +56,15 @@ function renderMiniCartList() {
     const row = document.createElement("div");
     row.classList.add("cart-item", "fade-in");
 
-    // miniaturka
     const img = document.createElement("img");
-    img.src = `img/${item.name.toLowerCase().replace(/ /g, "-")}.png`;
+    const imgName = item.name.toLowerCase().replace(/ /g, "-");
+    img.src = `img/${imgName}.svg`;
+    img.alt = item.name;
+    img.onerror = () => {
+      // Fallback gdy obrazek nie istnieje
+      img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='55' height='55'%3E%3Crect fill='%23ddd' width='55' height='55'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999' font-size='12'%3E?%3C/text%3E%3C/svg%3E";
+    };
 
-    // nazwa + ilość + cena
     const info = document.createElement("div");
     info.classList.add("cart-item-info");
 
@@ -65,15 +85,14 @@ function renderMiniCartList() {
     cartList.appendChild(row);
   });
 
-  // podsumowanie
+  // Podsumowanie całkowite
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-
   const summary = document.createElement("p");
   summary.classList.add("cart-summary", "fade-in");
   summary.textContent = `Razem za wszystko: ${totalPrice} zł`;
-
   cartList.appendChild(summary);
 }
+
 
 
 // Przeliczanie koszyka
@@ -101,18 +120,23 @@ function renderCart() {
 // Obsługa kliknięcia "Dodaj do koszyka"
 addButtons.forEach(btn => {
   btn.addEventListener("click", () => {
-    const name = btn.dataset.product!;
-    const price = Number(btn.dataset.price);
+    const name = btn.dataset.product;
+    const priceStr = btn.dataset.price;
 
-    // Szukamy produktu bez .find()
-    let existing: CartItem | null = null;
-
-    for (let i = 0; i < cart.length; i++) {
-      if (cart[i].name === name) {
-        existing = cart[i];
-        break;
-      }
+    if (!name || !priceStr) {
+      console.error("Brak danych produktu w przycisku");
+      return;
     }
+
+    const price = Number(priceStr);
+    
+    if (isNaN(price) || price <= 0) {
+      console.error("Nieprawidłowa cena produktu");
+      return;
+    }
+
+    // Szukamy produktu w koszyku
+    const existing = cart.find(item => item.name === name);
 
     if (existing) {
       existing.qty++;

@@ -3,33 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Galaretkowo - najlepsza tradycyjna galaretka z nóżek w całej Polsce. Domowe produkty najwyższej jakości." />
+    <meta name="keywords" content="galaretka, galaretka z nóżek, galaretka drobiowa, galaretka wieprzowa, galaretka warzywna" />
+    <meta name="theme-color" content="#b30000" />
+    <meta name="author" content="Galaretkowo" />
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <title>Galaretkowo</title>
+    <title>Galaretkowo - Tradycyjna Galaretka z Nóżek</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <header class="hero">
       <h1>Galaretkowo</h1>
       <p>Najlepsza galaretka z nóżek w całej Polsce</p>
-      <button id="orderBtn">Zamów</button>
-      <p id="addedMsg" style="opacity: 0; transition: opacity 0.4s">Dodano!</p>
     </header>
-    <div class="mini-cart">
-      <img src="img/cart.svg" class="mini-cart-icon" alt="Koszyk" />
+    <div class="mini-cart" role="button" tabindex="0" aria-label="Koszyk zakupowy">
+      <img src="img/cart.svg" class="mini-cart-icon" alt="Ikona koszyka" />
       <div class="mini-cart-info">
         <div class="mini-cart-count">
-          <span>Sztuki:</span> <span id="miniCount">0</span>
+          <span>Sztuki:</span> <span id="miniCount" aria-live="polite">0</span>
         </div>
         <div class="mini-cart-count">
-          <span>Razem:</span> <span><span id="miniTotal">0</span> zł</span>
+          <span>Razem:</span> <span><span id="miniTotal" aria-live="polite">0</span> zł</span>
         </div>
       </div>
     </div>
-    <div id="cartList"></div>
+    <div id="cartList" role="region" aria-label="Zawartość koszyka"></div>
     <section class="about fade-in">
       <h2>O naszej galaretce</h2>
       <p>
@@ -44,7 +46,7 @@
       <div class="product-grid">
         <!-- Kurczaczek -->
         <div class="product-card">
-          <img src="img/kurczaczek.png" alt="Kurczaczek" />
+          <img src="img/kurczaczek.svg" alt="Kurczaczek" />
           <h3>Kurczaczek</h3>
           <p>Galaretka drobiowa z warzywami</p>
           <p class="price">18 zł</p>
@@ -52,25 +54,26 @@
             class="addToCartBtn"
             data-product="Kurczaczek"
             data-price="18"
+            aria-label="Dodaj Kurczaczek do koszyka"
           >
             Dodaj do koszyka
           </button>
         </div>
 
-        <!-- Kogucik -->
+        <!-- Kogucisko -->
         <div class="product-card">
-          <img src="img/kogucik.png" alt="Kogucik" />
-          <h3>Kogucik</h3>
+          <img src="img/kogucisko.svg" alt="Kogucisko" />
+          <h3>Kogucisko</h3>
           <p>Galaretka drobiowa bez warzyw</p>
           <p class="price">20 zł</p>
-          <button class="addToCartBtn" data-product="Kogucik" data-price="20">
+          <button class="addToCartBtn" data-product="Kogucisko" data-price="20" aria-label="Dodaj Kogucisko do koszyka">
             Dodaj do koszyka
           </button>
         </div>
 
         <!-- Prosiaczek -->
         <div class="product-card">
-          <img src="img/prosiaczek.png" alt="Prosiaczek" />
+          <img src="img/prosiaczek.svg" alt="Prosiaczek" />
           <h3>Prosiaczek</h3>
           <p>Galaretka wieprzowa z warzywami</p>
           <p class="price">19 zł</p>
@@ -78,21 +81,23 @@
             class="addToCartBtn"
             data-product="Prosiaczek"
             data-price="19"
+            aria-label="Dodaj Prosiaczek do koszyka"
           >
             Dodaj do koszyka
           </button>
         </div>
 
-        <!-- Dzika Świnia -->
+        <!-- Dzika Swinia -->
         <div class="product-card">
-          <img src="img/dzika-swinia.png" alt="Dzika Świnia" />
-          <h3>Dzika Świnia</h3>
+          <img src="img/dzika-swinia.svg" alt="Dzika Swinia" />
+          <h3>Dzika Swinia</h3>
           <p>Galaretka wieprzowa bez warzyw</p>
           <p class="price">22 zł</p>
           <button
             class="addToCartBtn"
-            data-product="Dzika Świnia"
+            data-product="Dzika Swinia"
             data-price="22"
+            aria-label="Dodaj Dzika Swinia do koszyka"
           >
             Dodaj do koszyka
           </button>
@@ -100,7 +105,7 @@
 
         <!-- Warzywniak -->
         <div class="product-card">
-          <img src="img/warzywniak.png" alt="Warzywniak" />
+          <img src="img/warzywniak.svg" alt="Warzywniak" />
           <h3>Warzywniak</h3>
           <p>Galaretka warzywna na agarze</p>
           <p class="price">17 zł</p>
@@ -108,6 +113,7 @@
             class="addToCartBtn"
             data-product="Warzywniak"
             data-price="17"
+            aria-label="Dodaj Warzywniak do koszyka"
           >
             Dodaj do koszyka
           </button>
@@ -115,6 +121,6 @@
       </div>
     </section>
 
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
   </body>
 </html>
