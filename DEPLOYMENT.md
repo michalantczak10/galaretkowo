@@ -34,7 +34,7 @@ git push origin main
 - Kliknij "New +" → "Web Service"
 
 ### Krok 3: Połącz repo
-- Wybierz: `michalantczak10/galaretkowo`
+- Wybierz: `michalantczak10/galaretkarnia.pl`
 - Ustaw:
   - **Name**: `galaretkarnia-api`
   - **Root Directory**: `server`
