@@ -46,7 +46,11 @@ const customerNotes = customerNotesElement;
 // Stałe konfiguracyjne
 const STORAGE_KEY = "galaretkarnia_cart";
 const TOAST_DURATION = 2000;
-const API_URL = "http://localhost:3001/api/orders"; // Backend API endpoint
+// Auto-detect API URL based on environment
+const isDevelopment = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+const API_URL = isDevelopment
+    ? "http://localhost:3001/api/orders"
+    : "https://galaretkarnia-api.onrender.com/api/orders";
 // Funkcja animacji - usuwa klasę, wymusza reflow i dodaje ponownie
 const animate = (el, cls) => {
     el.classList.remove(cls);

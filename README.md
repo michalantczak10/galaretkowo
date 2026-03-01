@@ -14,6 +14,20 @@ Galaretkarnia to prosta, responsywna strona e-commerce oferująca najlepszą tra
 - **Responsywny design** - działa na wszystkich urządzeniach
 - **Dostępność (a11y)** - ARIA labels, focus states dla czytników ekranu
 - **SEO** - zoptymalizowane metatagi
+- **MongoDB** - pełna archiwizacja zamówień
+- **Powiadomienia email** - automatyczne maile o nowych zamówieniach
+
+## 🌐 Quick Start - Deployment
+
+Chcesz od razu wdrożyć aplikację na produkcję?
+
+**📘 [Kompletny przewodnik deployment →](DEPLOYMENT-GUIDE.md)**
+
+- Backend → Render.com (darmowy)
+- Frontend → Vercel (darmowy)
+- Database → MongoDB Atlas (darmowy)
+
+Czas setup: **~15 minut**
 
 ## 🛠️ Technologie
 
