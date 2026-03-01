@@ -27,6 +27,10 @@ const miniCount: HTMLElement = miniCountElement;
 const miniTotal: HTMLElement = miniTotalElement;
 const cartList: HTMLElement = cartListElement;
 
+// Stałe konfiguracyjne
+const STORAGE_KEY = "galaretkowo_cart";
+const TOAST_DURATION = 2000;
+
 // Funkcja animacji - usuwa klasę, wymusza reflow i dodaje ponownie
 const animate = (el: HTMLElement, cls: string) => {
   el.classList.remove(cls);
@@ -38,6 +42,78 @@ const animate = (el: HTMLElement, cls: string) => {
   setTimeout(() => {
     el.classList.remove(cls);
   }, animationDuration);
+};
+
+// Funkcja wyświetlania toast notyfikacji
+const showToast = (message: string) => {
+  const toast = document.createElement("div");
+  toast.className = "toast toast-show";
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.classList.remove("toast-show");
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  }, TOAST_DURATION);
+};
+
+// Funkcja usunięcia produktu z koszyka
+const removeItem = (name: string) => {
+  cart = cart.filter(item => item.name !== name);
+  renderCart();
+  showToast(`${name} usunięty z koszyka`);
+};
+
+// Funkcja zmniejszenia ilości
+const decreaseQty = (name: string) => {
+  const item = cart.find(i => i.name === name);
+  if (item) {
+    if (item.qty > 1) {
+      item.qty--;
+      renderCart();
+    } else {
+      removeItem(name);
+    }
+  }
+};
+
+// Funkcja zwiększenia ilości
+const increaseQty = (name: string) => {
+  const item = cart.find(i => i.name === name);
+  if (item) {
+    item.qty++;
+    renderCart();
+  }
+};
+
+// Funkcja wyczyszczenia koszyka
+const clearCart = () => {
+  if (cart.length === 0) return;
+  if (confirm("Na pewno chcesz wyczyścić cały koszyk?")) {
+    cart = [];
+    renderCart();
+    showToast("Koszyk wyczyszczony");
+  }
+};
+
+// Funkcja zapisu koszyka do localStorage
+const saveCart = () => {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+};
+
+// Funkcja załadowania koszyka z localStorage
+const loadCart = () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      cart = JSON.parse(saved);
+    } catch (e) {
+      console.error("Błąd przy ładowaniu koszyka", e);
+      cart = [];
+    }
+  }
 };
 
 // Wyświetlanie listy produktów
@@ -76,24 +152,61 @@ function renderMiniCartList() {
     details.classList.add("cart-item-details");
     details.textContent = `${item.qty} szt. × ${item.price} zł = ${item.qty * item.price} zł`;
 
+    const controls = document.createElement("div");
+    controls.classList.add("cart-item-controls");
+
+    // Przycisk minus
+    const btnMinus = document.createElement("button");
+    btnMinus.className = "cart-btn cart-btn-minus";
+    btnMinus.textContent = "−";
+    btnMinus.addEventListener("click", () => decreaseQty(item.name));
+
+    // Ilość
+    const qtySpan = document.createElement("span");
+    qtySpan.className = "cart-item-qty";
+    qtySpan.textContent = item.qty.toString();
+
+    // Przycisk plus
+    const btnPlus = document.createElement("button");
+    btnPlus.className = "cart-btn cart-btn-plus";
+    btnPlus.textContent = "+";
+    btnPlus.addEventListener("click", () => increaseQty(item.name));
+
+    // Przycisk usuń
+    const btnRemove = document.createElement("button");
+    btnRemove.className = "cart-btn cart-btn-remove";
+    btnRemove.textContent = "✕";
+    btnRemove.addEventListener("click", () => removeItem(item.name));
+
+    controls.appendChild(btnMinus);
+    controls.appendChild(qtySpan);
+    controls.appendChild(btnPlus);
+    controls.appendChild(btnRemove);
+
     info.appendChild(name);
     info.appendChild(details);
 
     row.appendChild(img);
     row.appendChild(info);
+    row.appendChild(controls);
 
     cartList.appendChild(row);
   });
 
   // Podsumowanie całkowite
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const summary = document.createElement("p");
-  summary.classList.add("cart-summary", "fade-in");
-  summary.textContent = `Razem za wszystko: ${totalPrice} zł`;
+  const summary = document.createElement("div");
+  summary.classList.add("cart-summary-total", "fade-in");
+  summary.textContent = `Razem w koszyku: ${totalPrice} zł`;
   cartList.appendChild(summary);
+
+  // Przycisk wyczyść koszyk
+  const clearBtn = document.createElement("button");
+  clearBtn.className = "cart-clear-btn";
+  clearBtn.textContent = "Wyczyść koszyk";
+  clearBtn.addEventListener("click", clearCart);
+  cartList.appendChild(clearBtn);
 }
-
-
 
 // Przeliczanie koszyka
 function renderCart() {
@@ -115,6 +228,7 @@ function renderCart() {
   animate(miniCart, "mini-cart-pulse");
 
   renderMiniCartList();
+  saveCart();
 }
 
 // Obsługa kliknięcia "Dodaj do koszyka"
@@ -145,5 +259,10 @@ addButtons.forEach(btn => {
     }
 
     renderCart();
+    showToast(`${name} dodany do koszyka!`);
   });
 });
+
+// Załaduj koszyk z localStorage przy starcie
+loadCart();
+renderCart();
