@@ -59,7 +59,7 @@ const customerNotes: HTMLTextAreaElement = customerNotesElement;
 // Stałe konfiguracyjne
 const STORAGE_KEY = "galaretkarnia_cart";
 const TOAST_DURATION = 2000;
-const API_URL = "https://galaretkarnia-api.onrender.com/api/orders"; // Backend API endpoint
+const API_URL = "http://localhost:3001/api/orders"; // Backend API endpoint
 
 // Funkcja animacji - usuwa klasę, wymusza reflow i dodaje ponownie
 const animate = (el: HTMLElement, cls: string) => {
