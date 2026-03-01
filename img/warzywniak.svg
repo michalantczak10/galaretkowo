@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Tło talerza/miski -->
+  <circle cx="100" cy="100" r="85" fill="#F5F5DC" stroke="#D2B48C" stroke-width="3"/>
+  <circle cx="100" cy="100" r="75" fill="#FFFAF0"/>
+  
+  <!-- Marchewka -->
+  <path d="M 50 80 L 45 110 L 55 110 L 52 80 Z" fill="#FF6600"/>
+  <path d="M 50 78 L 48 65 L 52 65" stroke="#228B22" stroke-width="2" fill="none"/>
+  <path d="M 48 78 L 44 68" stroke="#228B22" stroke-width="1.5" fill="none"/>
+  <path d="M 52 78 L 56 68" stroke="#228B22" stroke-width="1.5" fill="none"/>
+  
+  <!-- Pomidor -->
+  <circle cx="100" cy="90" r="18" fill="#FF6347"/>
+  <path d="M 95 72 L 100 75 L 105 72" stroke="#228B22" stroke-width="2" fill="none"/>
+  <path d="M 98 75 L 100 78" stroke="#228B22" stroke-width="1.5" fill="none"/>
+  <circle cx="97" cy="88" r="2" fill="#FF4500" opacity="0.5"/>
+  
+  <!-- Ogórek -->
+  <ellipse cx="140" cy="100" rx="12" ry="30" fill="#228B22" transform="rotate(25 140 100)"/>
+  <ellipse cx="138" cy="95" rx="3" ry="8" fill="#90EE90" opacity="0.4" transform="rotate(25 138 95)"/>
+  <ellipse cx="142" cy="105" rx="3" ry="8" fill="#90EE90" opacity="0.4" transform="rotate(25 142 105)"/>
+  
+  <!-- Pietruszka/Seler -->
+  <rect x="75" y="115" width="8" height="25" rx="3" fill="#F0E68C"/>
+  <path d="M 79 113 L 75 100 L 77 113" fill="#9ACD32"/>
+  <path d="M 79 113 L 83 100 L 81 113" fill="#9ACD32"/>
+  <path d="M 77 105 L 73 95" stroke="#6B8E23" stroke-width="1" fill="none"/>
+  <path d="M 81 105 L 85 95" stroke="#6B8E23" stroke-width="1" fill="none"/>
+  
+  <!-- Cebula -->
+  <ellipse cx="120" cy="130" rx="15" ry="18" fill="#DEB887"/>
+  <path d="M 120 110 L 118 105 L 122 105 Z" fill="#8B7355"/>
+  <ellipse cx="120" cy="128" rx="12" ry="3" fill="#CD853F" opacity="0.3"/>
+  <ellipse cx="120" cy="135" rx="12" ry="3" fill="#CD853F" opacity="0.3"/>
+  
+  <!-- Papryka -->
+  <ellipse cx="65" cy="130" rx="12" ry="16" fill="#FF0000"/>
+  <rect x="63" y="112" width="4" height="8" rx="2" fill="#228B22"/>
+  <circle cx="63" cy="128" r="3" fill="#8B0000" opacity="0.3"/>
+  
+  <!-- Groszek -->
+  <circle cx="145" cy="140" r="6" fill="#90EE90"/>
+  <circle cx="156" cy="138" r="6" fill="#90EE90"/>
+  <circle cx="150" cy="148" r="6" fill="#90EE90"/>
+  <circle cx="146" cy="141" r="2" fill="#228B22" opacity="0.3"/>
+  <circle cx="157" cy="139" r="2" fill="#228B22" opacity="0.3"/>
+  
+  <!-- Liść ozdobny -->
+  <path d="M 95 140 Q 85 145 90 155 Q 95 150 100 155 Q 105 145 95 140" fill="#32CD32" opacity="0.6"/>
+</svg>
