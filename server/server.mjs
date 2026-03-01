@@ -56,12 +56,17 @@ app.use(express.json());
 // Serve static files from project root
 app.use(express.static(projectRoot));
 
-// Email configuration
+// Email configuration - Outlook/Hotmail
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp-mail.outlook.com',
+  port: 587,
+  secure: false, // true for 465, false for other ports
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD // Google App Password, not regular password
+    pass: process.env.EMAIL_PASSWORD // Outlook/Microsoft account password or App Password
+  },
+  tls: {
+    ciphers: 'SSLv3'
   }
 });
 

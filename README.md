@@ -97,20 +97,18 @@ MONGODB_URI=mongodb://localhost:27017/galaretkarnia
 MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/galaretkarnia?retryWrites=true&w=majority
 ```
 
-### Gmail & Email
+### Email (Outlook/Hotmail)
 
 Backend wysyła email z powiadomieniem o każdym nowym zamówieniu.
 
 **📧 [Szczegółowa instrukcja konfiguracji email →](EMAIL-SETUP.md)**
 
 Szybka konfiguracja:
-1. Włącz 2FA na koncie Gmail: https://myaccount.google.com/security
-2. Wygeneruj App Password (16 znaków): https://myaccount.google.com/apppasswords
-3. W `server/.env` ustaw:
+1. W `server/.env` wpisz swoje dane Outlook
 ```env
-EMAIL_USER=twoj-email@gmail.com
-EMAIL_PASSWORD=xxxx-xxxx-xxxx-xxxx
-ORDER_EMAIL=zamowienia@galaretkarnia.pl
+EMAIL_USER=twoj-email@outlook.com
+EMAIL_PASSWORD=twoje-haslo
+ORDER_EMAIL=twoj-email@outlook.com
 ```
 
 **Uwaga**: Zamówienia są zapisywane w MongoDB niezależnie od konfiguracji email!

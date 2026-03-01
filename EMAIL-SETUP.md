@@ -1,4 +1,4 @@
-# 📧 Konfiguracja Email - Gmail
+# 📧 Konfiguracja Email - Outlook/Hotmail
 
 ## Dlaczego potrzebujesz emaili?
 
@@ -9,53 +9,37 @@ Gdy klient złoży zamówienie, system:
 
 ---
 
-## 🔐 Krok 1: Włącz 2FA na Gmail
+## ⚙️ Konfiguracja Outlook
 
-1. Wejdź na: https://myaccount.google.com/security
-2. Znajdź **"2-Step Verification"** (Weryfikacja dwuetapowa)
-3. Kliknij **"Get Started"** i postępuj według instrukcji
-4. Zweryfikuj numer telefonu SMS
+### Opcja 1: Zwykłe hasło (prostsza)
 
----
+Wystarczy użyć swojego normalnego hasła do konta Outlook/Hotmail.
 
-## 🔑 Krok 2: Wygeneruj App Password
-
-1. Wejdź na: https://myaccount.google.com/apppasswords
-2. Zaloguj się jeśli trzeba
-3. W polu **"Select app"** wybierz: **"Mail"**
-4. W polu **"Select device"** wybierz: **"Other (Custom name)"**
-5. Wpisz: `Galaretkarnia Backend`
-6. Kliknij **"Generate"**
-7. **SKOPIUJ 16-ZNAKOWY KOD** (np. `abcd efgh ijkl mnop`)
-
-⚠️ **WAŻNE**: Ten kod pokazuje się tylko RAZ! Zapisz go w bezpiecznym miejscu.
-
----
-
-## ⚙️ Krok 3: Skonfiguruj `.env`
-
-Otwórz plik `server/.env` i uzupełnij:
-
+1. Otwórz `server/.env`
+2. Wpisz:
 ```env
-# Gmail configuration
-EMAIL_USER=twoj-prawdziwy-email@gmail.com
-EMAIL_PASSWORD=abcdefghijklmnop
-
-# Business email (gdzie zamówienia będą przychodzić)
-ORDER_EMAIL=twoj-prawdziwy-email@gmail.com
+EMAIL_USER=twoj-email@outlook.com
+EMAIL_PASSWORD=twoje-normalne-haslo
+ORDER_EMAIL=twoj-email@outlook.com
 ```
 
-**Uwagi**:
-- `EMAIL_PASSWORD` = 16-znakowy App Password (BEZ spacji!)
-- `ORDER_EMAIL` = email gdzie chcesz dostawać zamówienia (może być ten sam co EMAIL_USER)
+### Opcja 2: App Password (bezpieczniejsza)
+
+Jeśli masz włączoną weryfikację dwuetapową:
+
+1. Wejdź na: https://account.microsoft.com/security
+2. Znajdź **"App passwords"**
+3. Kliknij **"Create a new app password"**
+4. Skopiuj wygenerowane hasło
+5. W `server/.env` użyj tego hasła jako `EMAIL_PASSWORD`
 
 ---
 
-## ✅ Krok 4: Przetestuj
+## ✅ Testuj konfigurację
 
 1. **Zrestartuj backend**:
    ```bash
-   # Zatrzymaj poprzedni proces (Ctrl+C)
+   # Zatrzymaj poprzedni proces (Ctrl+C w terminalu backendu)
    cd server
    node server.mjs
    ```
@@ -73,22 +57,18 @@ ORDER_EMAIL=twoj-prawdziwy-email@gmail.com
 
 ## ❌ Troubleshooting
 
-### Błąd: "Invalid login: 535-5.7.8"
-- ❌ Używasz zwykłego hasła zamiast App Password
-- ✅ Wygeneruj App Password (krok 2)
-
-### Błąd: "Username and Password not accepted"
+### Błąd: "Invalid login" lub "Authentication failed"
 - Sprawdź czy EMAIL_USER jest poprawny
-- Sprawdź czy skopiowałeś App Password bez spacji
-
-### Nie widzę opcji "App passwords"
-- Musisz najpierw włączyć 2FA (krok 1)
-- Po włączeniu 2FA odśwież stronę
+- Sprawdź czy hasło jest poprawne
+- Spróbuj wygenerować App Password (opcja 2)
 
 ### Email nie przychodzi
-- Sprawdź folder SPAM
+- Sprawdź folder SPAM/Junk
 - Sprawdź czy backend wyświetlił: `✅ Order email sent for ID: ...`
 - Sprawdź logi backendu czy są błędy
+
+### "self signed certificate" error
+- To normalne z Outlookiem - dodane `tls.ciphers` w konfiguracji to naprawia
 
 ---
 
