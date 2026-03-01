@@ -1,0 +1,21 @@
+{
+  "name": "galaretkowo",
+  "version": "1.0.0",
+  "description": "Sklep z tradycyjną galaretką z nóżek",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "dev": "tsc --watch"
+  },
+  "keywords": [
+    "galaretka",
+    "e-commerce",
+    "typescript"
+  ],
+  "author": "Galaretkowo",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
