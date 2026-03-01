@@ -17,15 +17,18 @@ Galaretkarnia to prosta, responsywna strona e-commerce oferująca najlepszą tra
 
 ## 🛠️ Technologie
 
-- **TypeScript** - typowanie statyczne
-- **CSS3** - zmienne CSS, animacje, flexbox
-- **HTML5** - semantyczny markup
+- **Frontend**: TypeScript, CSS3, HTML5
+- **Backend**: Node.js + Express
+- **Baza danych**: MongoDB (archiwizacja zamówień)
+- **Email**: Nodemailer + Gmail
 
 ## 📦 Instalacja
 
+### Frontend
+
 1. Sklonuj repozytorium:
 ```bash
-git clone [adres-repo]
+git clone https://github.com/michalantczak10/galaretkarnia.pl.git
 cd galaretkarnia.pl
 ```
 
@@ -39,27 +42,145 @@ npm install
 npm run build
 ```
 
+### Backend
+
+1. Przejdź do folderu `server`:
+```bash
+cd server
+```
+
+2. Zainstaluj zależności:
+```bash
+npm install
+```
+
+3. Skonfiguruj `.env` (patrz sekcja poniżej)
+
+## ⚙️ Konfiguracja
+
+### MongoDB
+
+Backend wymaga MongoDB. Masz dwie opcje:
+
+#### Opcja 1: Lokalne (localhost)
+```bash
+# Zainstaluj MongoDB Community Edition
+# https://www.mongodb.com/docs/manual/installation/
+
+# Uruchom MongoDB
+mongod
+
+# W .env ustaw:
+MONGODB_URI=mongodb://localhost:27017/galaretkarnia
+```
+
+#### Opcja 2: MongoDB Cloud (Atlas) - rekomendowane dla produkcji
+```bash
+# Wejdź na https://www.mongodb.com/cloud/atlas
+# Utwórz darmowe konto
+# Skopiuj connection string
+# W .env ustaw:
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/galaretkarnia?retryWrites=true&w=majority
+```
+
+### Gmail & Email
+
+1. Włącz 2FA na koncie Gmail: https://myaccount.google.com/security
+2. Wygeneruj App Password (16 znaków): https://myaccount.google.com/apppasswords
+3. W `server/.env` ustaw:
+```env
+EMAIL_USER=twoj-email@gmail.com
+EMAIL_PASSWORD=xxxx-xxxx-xxxx-xxxx
+ORDER_EMAIL=zamowienia@galaretkarnia.pl
+```
+
 ## 🏃 Uruchomienie
 
-### Tryb deweloperski (watch mode):
+### Dla developmentu - Terminal 1 (Frontend)
 ```bash
 npm run watch
 ```
+Otwórz `http://localhost:5173` lub `index.html` w przeglądarce.
 
-Następnie otwórz `index.html` w przeglądarce.
+### Dla developmentu - Terminal 2 (Backend)
+```bash
+cd server
+npm run dev
+```
+Backend będzie dostępny na `http://localhost:3001`.
+
+### Dla produkcji - Frontend
+```bash
+npm run build
+# Wynikowe pliki w: index.html, app.js, style.css
+```
 
 ## 📂 Struktura projektu
 
 ```
 galaretkarnia.pl/
-├── index.html          # Główna strona HTML
-├── app.ts              # Główny plik TypeScript
-├── app.js              # Skompilowany JavaScript
-├── style.css           # Style CSS
-├── tsconfig.json       # Konfiguracja TypeScript
-├── package.json        # Konfiguracja npm
-├── img/                # Obrazy produktów
-└── favicon/            # Ikony strony
+├── index.html              # Główna strona HTML
+├── app.ts                  # Frontend (TypeScript)
+├── app.js                  # Frontend skompilowany
+├── style.css               # Style CSS
+├── package.json            # Konfiguracja npm
+├── tsconfig.json           # Konfiguracja TypeScript
+├── img/                    # Obrazy produktów
+├── favicon/                # Ikony strony
+└── server/                 # Backend (Node.js + Express)
+    ├── server.mjs          # API serwera
+    ├── .env                # Zmienne środowiska (lokalne)
+    ├── .env.example        # Szablon .env
+    └── package.json        # Zależności backendu
+```
+
+## 🔌 API Endpoints
+
+### Zamówienia
+
+**POST `/api/orders`** - Złóż nowe zamówienie
+```json
+{
+  "name": "Jan Nowak",
+  "phone": "+48-123-456-789",
+  "address": "ul. Galaretki 10, 00-000 Warszawa",
+  "notes": "Proszę dostarczyć po 18:00",
+  "items": [
+    {"name": "Kurczaczek", "price": 18, "qty": 2}
+  ],
+  "total": 36
+}
+```
+
+**GET `/api/orders`** - Pobierz wszystkie zamówienia (admin)
+
+**GET `/api/orders/id/:orderId`** - Pobierz szczegóły zamówienia
+
+**PUT `/api/orders/id/:orderId`** - Zmień status zamówienia
+```json
+{
+  "status": "w-realizacji"  // nowe | w-realizacji | gotowe | anulowane
+}
+```
+
+## 💾 Schemat Zamówienia
+
+Każde zamówienie w MongoDB zawiera:
+```json
+{
+  "_id": "ObjectId",
+  "name": "string",
+  "phone": "string",
+  "address": "string",
+  "notes": "string",
+  "items": [
+    {"name": "string", "price": "number", "qty": "number"}
+  ],
+  "total": "number",
+  "status": "nowe|w-realizacji|gotowe|anulowane",
+  "createdAt": "Date",
+  "updatedAt": "Date"
+}
 ```
 
 ## 🎨 Produkty

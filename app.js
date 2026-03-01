@@ -149,7 +149,7 @@ const handleCheckoutSubmit = async (event) => {
             throw new Error(data.error || "Błąd przy wysyłaniu zamówienia");
         }
         // Success!
-        setCheckoutMessage(`✅ ${data.message}`, false);
+        setCheckoutMessage(`✅ Zamówienie przyjęte!<br><strong style="font-size: 1.2em;">ID: ${data.orderId.slice(-8).toUpperCase()}</strong><br><small>Skontaktujemy się w ciągu 30 minut</small>`, false);
         showToast("Zamówienie przyjęte!");
         // Clear form
         customerName.value = "";
