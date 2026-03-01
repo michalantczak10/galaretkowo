@@ -1,10 +1,10 @@
-# Galaretkowo 🍮
+# Galaretkarnia 🍮
 
 Strona internetowa sklepu z tradycyjną galaretką z nóżek.
 
 ## 📋 Opis
 
-Galaretkowo to prosta, responsywna strona e-commerce oferująca najlepszą tradycyjną galaretką z nóżek w Polsce. Projekt wykorzystuje TypeScript dla typowania i bezpieczeństwa kodu.
+Galaretkarnia to prosta, responsywna strona e-commerce oferująca najlepszą tradycyjną galaretką z nóżek w Polsce. Projekt wykorzystuje TypeScript dla typowania i bezpieczeństwa kodu.
 
 ## 🚀 Funkcjonalności
 
@@ -26,7 +26,7 @@ Galaretkowo to prosta, responsywna strona e-commerce oferująca najlepszą trady
 1. Sklonuj repozytorium:
 ```bash
 git clone [adres-repo]
-cd galaretkowo
+cd galaretkarnia.pl
 ```
 
 2. Zainstaluj zależności:
@@ -51,7 +51,7 @@ Następnie otwórz `index.html` w przeglądarce.
 ## 📂 Struktura projektu
 
 ```
-galaretkowo/
+galaretkarnia.pl/
 ├── index.html          # Główna strona HTML
 ├── app.ts              # Główny plik TypeScript
 ├── app.js              # Skompilowany JavaScript
@@ -104,4 +104,4 @@ MIT
 
 ## 👨‍💻 Autor
 
-Galaretkowo © 2026
+Galaretkarnia.pl © 2026

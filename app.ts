@@ -14,9 +14,30 @@ const miniCartElement = document.querySelector(".mini-cart");
 const miniCountElement = document.getElementById("miniCount");
 const miniTotalElement = document.getElementById("miniTotal");
 const cartListElement = document.getElementById("cartList");
+const checkoutFormElement = document.getElementById("checkoutForm") as HTMLFormElement | null;
+const checkoutSummaryListElement = document.getElementById("checkoutSummaryList");
+const checkoutTotalElement = document.getElementById("checkoutTotal");
+const checkoutMessageElement = document.getElementById("checkoutMessage");
+const customerNameElement = document.getElementById("customerName") as HTMLInputElement | null;
+const customerPhoneElement = document.getElementById("customerPhone") as HTMLInputElement | null;
+const customerAddressElement = document.getElementById("customerAddress") as HTMLInputElement | null;
+const customerNotesElement = document.getElementById("customerNotes") as HTMLTextAreaElement | null;
 
 // Sprawdzenie czy wszystkie elementy istnieją
-if (!miniCartElement || !miniCountElement || !miniTotalElement || !cartListElement) {
+if (
+  !miniCartElement ||
+  !miniCountElement ||
+  !miniTotalElement ||
+  !cartListElement ||
+  !checkoutFormElement ||
+  !checkoutSummaryListElement ||
+  !checkoutTotalElement ||
+  !checkoutMessageElement ||
+  !customerNameElement ||
+  !customerPhoneElement ||
+  !customerAddressElement ||
+  !customerNotesElement
+) {
   console.error("Nie znaleziono wymaganych elementów DOM");
   throw new Error("Brak wymaganych elementów na stronie");
 }
@@ -26,10 +47,19 @@ const miniCart: HTMLElement = miniCartElement as HTMLElement;
 const miniCount: HTMLElement = miniCountElement;
 const miniTotal: HTMLElement = miniTotalElement;
 const cartList: HTMLElement = cartListElement;
+const checkoutForm: HTMLFormElement = checkoutFormElement;
+const checkoutSummaryList: HTMLElement = checkoutSummaryListElement;
+const checkoutTotal: HTMLElement = checkoutTotalElement;
+const checkoutMessage: HTMLElement = checkoutMessageElement;
+const customerName: HTMLInputElement = customerNameElement;
+const customerPhone: HTMLInputElement = customerPhoneElement;
+const customerAddress: HTMLInputElement = customerAddressElement;
+const customerNotes: HTMLTextAreaElement = customerNotesElement;
 
 // Stałe konfiguracyjne
-const STORAGE_KEY = "galaretkowo_cart";
+const STORAGE_KEY = "galaretkarnia_cart";
 const TOAST_DURATION = 2000;
+const ORDER_EMAIL = "zamowienia@galaretkarnia.pl";
 
 // Funkcja animacji - usuwa klasę, wymusza reflow i dodaje ponownie
 const animate = (el: HTMLElement, cls: string) => {
@@ -57,6 +87,100 @@ const showToast = (message: string) => {
       toast.remove();
     }, 300);
   }, TOAST_DURATION);
+};
+
+const setCheckoutMessage = (message: string, isError: boolean) => {
+  checkoutMessage.textContent = message;
+  checkoutMessage.classList.remove("is-error", "is-success");
+  checkoutMessage.classList.add(isError ? "is-error" : "is-success");
+};
+
+const scrollToCheckout = () => {
+  const checkoutSection = document.getElementById("checkout");
+  checkoutSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+const getCartTotalPrice = () => cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+const renderCheckoutSummary = () => {
+  checkoutSummaryList.innerHTML = "";
+
+  if (cart.length === 0) {
+    const empty = document.createElement("p");
+    empty.textContent = "Koszyk jest pusty. Dodaj produkty, aby złożyć zamówienie.";
+    checkoutSummaryList.appendChild(empty);
+    checkoutTotal.textContent = "0";
+    return;
+  }
+
+  cart.forEach(item => {
+    const row = document.createElement("p");
+    row.className = "checkout-summary-row";
+    row.textContent = `${item.name} — ${item.qty} słoik(ów) × ${item.price} zł`;
+    checkoutSummaryList.appendChild(row);
+  });
+
+  checkoutTotal.textContent = getCartTotalPrice().toString();
+};
+
+const isPhoneValid = (phone: string) => /^[0-9+()\-\s]{7,20}$/.test(phone);
+
+const handleCheckoutSubmit = (event: SubmitEvent) => {
+  event.preventDefault();
+
+  if (cart.length === 0) {
+    setCheckoutMessage("Koszyk jest pusty. Dodaj produkty przed złożeniem zamówienia.", true);
+    return;
+  }
+
+  const name = customerName.value.trim();
+  const phone = customerPhone.value.trim();
+  const address = customerAddress.value.trim();
+  const notes = customerNotes.value.trim();
+
+  if (name.length < 3) {
+    setCheckoutMessage("Podaj poprawne imię i nazwisko.", true);
+    customerName.focus();
+    return;
+  }
+
+  if (!isPhoneValid(phone)) {
+    setCheckoutMessage("Podaj poprawny numer telefonu.", true);
+    customerPhone.focus();
+    return;
+  }
+
+  if (address.length < 6) {
+    setCheckoutMessage("Podaj pełny adres dostawy.", true);
+    customerAddress.focus();
+    return;
+  }
+
+  const itemsText = cart
+    .map(item => `- ${item.name}: ${item.qty} słoik(ów) × ${item.price} zł = ${item.qty * item.price} zł`)
+    .join("\n");
+
+  const mailSubject = encodeURIComponent("Nowe zamówienie - Galaretkarnia.pl");
+  const mailBody = encodeURIComponent(
+    [
+      "Dzień dobry,",
+      "",
+      "chcę złożyć zamówienie:",
+      itemsText,
+      "",
+      `Do zapłaty: ${getCartTotalPrice()} zł`,
+      "",
+      "Dane klienta:",
+      `Imię i nazwisko: ${name}`,
+      `Telefon: ${phone}`,
+      `Adres dostawy: ${address}`,
+      `Uwagi: ${notes || "Brak"}`
+    ].join("\n")
+  );
+
+  window.location.href = `mailto:${ORDER_EMAIL}?subject=${mailSubject}&body=${mailBody}`;
+  setCheckoutMessage("Otwarto wiadomość e-mail z gotowym zamówieniem.", false);
+  showToast("Przygotowano zamówienie do wysłania");
 };
 
 // Funkcja usunięcia produktu z koszyka
@@ -199,6 +323,12 @@ function renderMiniCartList() {
   clearBtn.textContent = "Wyczyść koszyk";
   clearBtn.addEventListener("click", clearCart);
   cartList.appendChild(clearBtn);
+
+  const checkoutBtn = document.createElement("button");
+  checkoutBtn.className = "cart-checkout-btn";
+  checkoutBtn.textContent = "Przejdź do zamówienia";
+  checkoutBtn.addEventListener("click", scrollToCheckout);
+  cartList.appendChild(checkoutBtn);
 }
 
 // Przeliczanie koszyka
@@ -221,6 +351,7 @@ function renderCart() {
   animate(miniCart, "mini-cart-pulse");
 
   renderMiniCartList();
+  renderCheckoutSummary();
   saveCart();
 }
 
@@ -257,5 +388,6 @@ addButtons.forEach(btn => {
 });
 
 // Załaduj koszyk z localStorage przy starcie
+checkoutForm.addEventListener("submit", handleCheckoutSubmit);
 loadCart();
 renderCart();

@@ -1,5 +1,5 @@
 {
-  "name": "galaretkowo",
+  "name": "galaretkarnia.pl",
   "version": "1.0.0",
   "description": "Sklep z tradycyjną galaretką z nóżek",
   "type": "module",
@@ -13,7 +13,7 @@
     "e-commerce",
     "typescript"
   ],
-  "author": "Galaretkowo",
+  "author": "Galaretkarnia.pl",
   "license": "MIT",
   "devDependencies": {
     "typescript": "^5.0.0"

@@ -3,21 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Galaretkowo - najlepsza tradycyjna galaretka z nóżek w całej Polsce. Domowe produkty najwyższej jakości." />
+    <meta name="description" content="Galaretkarnia - najlepsza tradycyjna galaretka z nóżek w całej Polsce. Domowe produkty najwyższej jakości." />
     <meta name="keywords" content="galaretka, galaretka z nóżek, galaretka drobiowa, galaretka wieprzowa, galaretka warzywna" />
     <meta name="theme-color" content="#b30000" />
-    <meta name="author" content="Galaretkowo" />
+    <meta name="author" content="Galaretkarnia" />
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <title>Galaretkowo - Tradycyjna Galaretka z Nóżek</title>
+    <title>Galaretkarnia - Tradycyjna Galaretka z Nóżek</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <header class="hero">
-      <h1>Galaretkowo</h1>
+      <h1>Galaretkarnia</h1>
       <p>Najlepsza galaretka z nóżek w całej Polsce</p>
     </header>
     <div class="mini-cart" aria-label="Podsumowanie koszyka">
@@ -119,6 +119,42 @@
           </button>
         </div>
       </div>
+    </section>
+
+    <section class="checkout fade-in" id="checkout">
+      <h2>Zamówienie</h2>
+      <div class="checkout-layout">
+        <form id="checkoutForm" class="checkout-form" novalidate>
+          <label for="customerName">Imię i nazwisko</label>
+          <input id="customerName" name="customerName" type="text" autocomplete="name" required />
+
+          <label for="customerPhone">Telefon</label>
+          <input id="customerPhone" name="customerPhone" type="tel" autocomplete="tel" required />
+
+          <label for="customerAddress">Adres dostawy</label>
+          <input id="customerAddress" name="customerAddress" type="text" autocomplete="street-address" required />
+
+          <label for="customerNotes">Uwagi do zamówienia (opcjonalnie)</label>
+          <textarea id="customerNotes" name="customerNotes" rows="4" placeholder="Np. proszę o dostawę po 18:00"></textarea>
+
+          <button type="submit" id="submitOrderBtn">Zamawiam</button>
+          <p id="checkoutMessage" class="checkout-message" aria-live="polite"></p>
+        </form>
+
+        <aside class="checkout-summary" aria-label="Podsumowanie zamówienia">
+          <h3>Podsumowanie koszyka</h3>
+          <div id="checkoutSummaryList"></div>
+          <p class="checkout-total">Do zapłaty: <span id="checkoutTotal">0</span> zł</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="trust fade-in">
+      <h2>Kontakt i dostawa</h2>
+      <p>📞 Telefon: +48 500 600 700</p>
+      <p>🕒 Godziny przyjmowania zamówień: pon. - sob. 08:00 - 20:00</p>
+      <p>🚚 Obszar dostawy: Warszawa i okolice do 20 km</p>
+      <p>✅ Zamówienia realizujemy po potwierdzeniu telefonicznym.</p>
     </section>
 
     <script type="module" src="app.js"></script>
