@@ -158,12 +158,6 @@ function renderMiniCartList() {
         row.appendChild(controls);
         cartList.appendChild(row);
     });
-    // Podsumowanie całkowite
-    const totalPrice = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-    const summary = document.createElement("div");
-    summary.classList.add("cart-summary-total", "fade-in");
-    summary.textContent = `Razem w koszyku: ${totalPrice} zł`;
-    cartList.appendChild(summary);
     // Przycisk wyczyść koszyk
     const clearBtn = document.createElement("button");
     clearBtn.className = "cart-clear-btn";

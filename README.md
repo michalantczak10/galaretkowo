@@ -67,7 +67,7 @@ galaretkowo/
 1. **Kurczaczek** - Galaretka drobiowa z warzywami (18 zł)
 2. **Kogucisko** - Galaretka drobiowa bez warzyw (20 zł)
 3. **Prosiaczek** - Galaretka wieprzowa z warzywami (19 zł)
-4. **Dzika Swinia** - Galaretka wieprzowa bez warzyw (22 zł)
+4. **Dzika Świnia** - Galaretka wieprzowa bez warzyw (22 zł)
 5. **Warzywniak** - Galaretka warzywna na agarze (17 zł)
 
 ## 🔧 Konfiguracja
