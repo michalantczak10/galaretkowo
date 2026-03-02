@@ -138,15 +138,22 @@ app.post('/api/orders', async (req, res) => {
     const result = await ordersCollection.insertOne(order);
     const orderId = result.insertedId.toString();
 
-    // Format items for email
+    // IMMEDIATELY send success response to client (don't wait for email)
+    res.json({
+      success: true,
+      orderId: orderId,
+      message: 'Zamówienie przyjęte! Skontaktujemy się w ciągu 30 minut.',
+      status: 'nowe'
+    });
+
+    // Send email in background (fire-and-forget, non-blocking)
     const itemsText = items
       .map(item => `- ${item.name}: ${item.qty} słoik(ów) × ${item.price} zł = ${item.qty * item.price} zł`)
       .join('\n');
 
-    // Email to shop owner (WITH ORDER ID FOR TRACKING)
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: process.env.ORDER_EMAIL || 'zamowienia@galaretkarnia.pl',
+      to: process.env.ORDER_EMAIL || process.env.EMAIL_USER,
       subject: `📦 Nowe zamówienie - ${orderId.slice(-6).toUpperCase()}`,
       html: `
         <h2>📦 Nowe zamówienie</h2>
@@ -172,22 +179,10 @@ app.post('/api/orders', async (req, res) => {
       `
     };
 
-    // Send email to owner
-    try {
-      await transporter.sendMail(mailOptions);
-      console.log(`✅ Order email sent for ID: ${orderId}`);
-    } catch (emailError) {
-      console.error('⚠️  Email sending failed (but order saved to DB):', emailError.message);
-      // Continue - order is saved in DB even if email fails
-    }
-
-    // Success response - ONLY RETURN ORDER ID, NO EMAIL REQUIRED
-    res.json({
-      success: true,
-      orderId: orderId,
-      message: 'Zamówienie przyjęte! Skontaktujemy się w ciągu 30 minut.',
-      status: 'nowe'
-    });
+    // Fire-and-forget email (won't block response)
+    transporter.sendMail(mailOptions)
+      .then(() => console.log(`✅ Order email sent for ID: ${orderId}`))
+      .catch(err => console.error('⚠️  Email sending failed (but order saved to DB):', err.message));
 
   } catch (error) {
     console.error('Order processing error:', error);
