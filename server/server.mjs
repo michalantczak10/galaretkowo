@@ -47,9 +47,9 @@ const projectRoot = join(__dirname, '..');
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3001',
+  origin: '*', // Allow all origins for now (will fix with proper FRONTEND_URL later)
   methods: ['POST', 'GET', 'OPTIONS'],
-  credentials: true
+  credentials: false
 }));
 app.use(express.json());
 
