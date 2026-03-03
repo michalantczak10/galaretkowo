@@ -68,17 +68,14 @@ app.use(express.json());
 // Serve static files from project root
 app.use(express.static(projectRoot));
 
-// Email configuration - Outlook/Hotmail
+// Email configuration - home.pl SMTP (for galaretkarnia.pl domain)
 const transporter = nodemailer.createTransport({
-  host: 'smtp-mail.outlook.com',
+  host: 'server2632908.home.pl',
   port: 587,
-  secure: false, // true for 465, false for other ports
+  secure: false, // true for 465, false for 587
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD // Outlook/Microsoft account password or App Password
-  },
-  tls: {
-    ciphers: 'SSLv3'
+    user: process.env.EMAIL_USER, // kontakt@galaretkarnia.pl
+    pass: process.env.EMAIL_PASSWORD // Password to kontakt@galaretkarnia.pl mailbox
   }
 });
 
