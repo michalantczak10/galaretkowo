@@ -1,5 +1,5 @@
 import express from 'express';
-import sgMail from '@sendgrid/mail';
+import { Resend } from 'resend';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -68,14 +68,14 @@ app.use(express.json());
 // Serve static files from project root
 app.use(express.static(projectRoot));
 
-// Email configuration - SendGrid API
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+// Email configuration - Resend API
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Test email configuration on startup
-if (process.env.SENDGRID_API_KEY) {
-  console.log('✅ SendGrid API Key configured');
+if (process.env.RESEND_API_KEY) {
+  console.log('✅ Resend API Key configured');
 } else {
-  console.error('❌ SENDGRID_API_KEY not set in environment');
+  console.error('❌ RESEND_API_KEY not set in environment');
 }
 
 // Validation helper
@@ -139,7 +139,7 @@ app.post('/api/orders', async (req, res) => {
 
     const mailOptions = {
       to: process.env.ORDER_EMAIL || 'kontakt@galaretkarnia.pl',
-      from: process.env.SENDGRID_FROM_EMAIL || 'kontakt@galaretkarnia.pl',
+      from: process.env.RESEND_FROM_EMAIL || 'noreply@galaretkarnia.onresend.com',
       subject: `📦 Nowe zamówienie - ${orderId.slice(-6).toUpperCase()}`,
       html: `
         <h2>📦 Nowe zamówienie</h2>
@@ -165,12 +165,17 @@ app.post('/api/orders', async (req, res) => {
       `
     };
 
-    // Fire-and-forget email via SendGrid (won't block response)
-    sgMail.send(mailOptions)
-      .then(() => console.log(`✅ Order email sent for ID: ${orderId}`))
+    // Fire-and-forget email via Resend (won't block response)
+    resend.emails.send(mailOptions)
+      .then((result) => {
+        if (result.error) {
+          console.error('⚠️ Email sending failed (but order saved to DB):', result.error);
+        } else {
+          console.log(`✅ Order email sent for ID: ${orderId}`);
+        }
+      })
       .catch(err => {
-        const sendGridMessage = err?.response?.body?.errors?.[0]?.message;
-        console.error('⚠️  Email sending failed (but order saved to DB):', sendGridMessage || err.message);
+        console.error('⚠️ Email sending failed (but order saved to DB):', err.message);
       });
 
   } catch (error) {
