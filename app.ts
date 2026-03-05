@@ -95,7 +95,7 @@ const showToast = (message: string) => {
 };
 
 const setCheckoutMessage = (message: string, isError: boolean) => {
-  checkoutMessage.textContent = message;
+  checkoutMessage.innerHTML = message;
   checkoutMessage.classList.remove("is-error", "is-success");
   checkoutMessage.classList.add(isError ? "is-error" : "is-success");
 };
