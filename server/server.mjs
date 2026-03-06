@@ -80,23 +80,28 @@ if (process.env.RESEND_API_KEY) {
 
 // Validation helper
 const isPhoneValid = (phone) => /^[0-9+()\-\s]{7,20}$/.test(phone);
+const isParcelLockerCodeValid = (code) => /^[A-Z]{3}\d{2}[A-Z0-9]?$/.test(String(code || '').toUpperCase());
+
+const normalizePhone = (phone) => String(phone || '').replace(/\D/g, '');
+
+const getPhoneSuffix = (phone) => normalizePhone(phone).slice(-4);
+
+const formatOrderRef = (orderId) => orderId.slice(-8).toUpperCase();
+
+const createTransferTitle = (orderRef) => `Opłata za zamówienie nr: ${orderRef}`;
 
 // POST /api/orders - Accept order, save to DB and send email to owner
 app.post('/api/orders', async (req, res) => {
   try {
-    const { name, phone, address, notes, items, total } = req.body;
+    const { phone, parcelLockerCode, notes, items, total, paymentMethod } = req.body;
 
     // Validation
-    if (!name || name.trim().length < 3) {
-      return res.status(400).json({ error: 'Podaj poprawne imię i nazwisko.' });
-    }
-
     if (!phone || !isPhoneValid(phone)) {
       return res.status(400).json({ error: 'Podaj poprawny numer telefonu.' });
     }
 
-    if (!address || address.trim().length < 6) {
-      return res.status(400).json({ error: 'Podaj pełny adres dostawy.' });
+    if (!isParcelLockerCodeValid(parcelLockerCode)) {
+      return res.status(400).json({ error: 'Podaj poprawny kod paczkomatu.' });
     }
 
     if (!Array.isArray(items) || items.length === 0) {
@@ -107,15 +112,24 @@ app.post('/api/orders', async (req, res) => {
       return res.status(400).json({ error: 'Nieprawidłowa kwota.' });
     }
 
+    if (paymentMethod && paymentMethod !== 'bank_transfer') {
+      return res.status(400).json({ error: 'Obsługujemy tylko płatność przelewem.' });
+    }
+
+    const normalizedParcelLockerCode = parcelLockerCode.toUpperCase();
+    const phoneSuffix = getPhoneSuffix(phone);
+
     // Create order object
     const order = {
-      name,
       phone,
-      address,
+      phoneSuffix,
+      parcelLockerCode: normalizedParcelLockerCode,
       notes: notes || '',
       items,
       total,
-      status: 'nowe', // Status: nowe, w-realizacji, gotowe, anulowane
+      paymentMethod: 'bank_transfer',
+      paymentStatus: 'oczekiwanie-na-wplate',
+      status: 'oczekuje-na-platnosc', // Status: oczekuje-na-platnosc, oplacone, w-realizacji, gotowe, anulowane
       environment: process.env.NODE_ENV || 'development', // 'development' lub 'production'
       createdAt: new Date(),
       updatedAt: new Date()
@@ -124,13 +138,18 @@ app.post('/api/orders', async (req, res) => {
     // Save to MongoDB
     const result = await ordersCollection.insertOne(order);
     const orderId = result.insertedId.toString();
+    const orderRef = formatOrderRef(orderId);
+    const transferTitle = createTransferTitle(orderRef);
 
     // IMMEDIATELY send success response to client (don't wait for email)
     res.json({
       success: true,
       orderId: orderId,
-      message: 'Zamówienie przyjęte! Skontaktujemy się w ciągu 30 minut.',
-      status: 'nowe'
+      orderRef,
+      transferTitle,
+      message: 'Zamówienie zapisane. Realizacja po zaksięgowaniu wpłaty.',
+      status: 'oczekuje-na-platnosc',
+      paymentStatus: 'oczekiwanie-na-wplate'
     });
 
     // Send email in background (fire-and-forget, non-blocking)
@@ -142,27 +161,30 @@ app.post('/api/orders', async (req, res) => {
     const mailOptions = {
       to: process.env.ORDER_EMAIL || 'kontakt@galaretkarnia.pl',
       from: process.env.RESEND_FROM_EMAIL || 'noreply@galaretkarnia.onresend.com',
-      subject: `${isDev ? '[TEST]' : '📦'} Nowe zamówienie - ${orderId.slice(-6).toUpperCase()}`,
+      subject: `${isDev ? '[TEST]' : '📦'} Nowe zamówienie - ${orderRef}`,
       html: `
         <h2>${isDev ? '[TEST] 🧪' : '📦'} Nowe zamówienie</h2>
         <p style="background: #e3f2fd; padding: 10px; border-radius: 5px;">
-          <strong>ID Zamówienia:</strong> ${orderId}
+          <strong>ID Zamówienia:</strong> ${orderId}<br>
+          <strong>Numer dla klienta:</strong> ${orderRef}<br>
+          <strong>Tytuł przelewu:</strong> ${transferTitle}
         </p>
         <hr>
         <h3>Pozycje:</h3>
         <pre>${itemsText}</pre>
         <hr>
         <p><strong>📌 Do zapłaty:</strong> ${total} zł</p>
+        <p><strong>💳 Płatność:</strong> przelew tradycyjny (oczekiwanie na zaksięgowanie)</p>
         <hr>
         <h3>Dane klienta:</h3>
-        <p><strong>👤 Imię i nazwisko:</strong> ${name}</p>
         <p><strong>📞 Telefon:</strong> ${phone}</p>
-        <p><strong>📍 Adres dostawy:</strong> ${address}</p>
+        <p><strong>📞 Końcówka telefonu:</strong> ${phoneSuffix}</p>
+        <p><strong>📦 Paczkomat:</strong> ${normalizedParcelLockerCode}</p>
         <p><strong>💬 Uwagi:</strong> ${notes || 'Brak'}</p>
         <hr>
         <p style="color: #666; font-size: 12px;">
           ⏰ Zamówienie przyjęte: ${new Date().toLocaleString('pl-PL')}<br>
-          Status: <strong>NOWE</strong> (oczekuje na potwierdzenie)
+          Status: <strong>OCZEKUJE NA WPŁATĘ</strong>
         </p>
       `
     };
@@ -228,7 +250,7 @@ app.put('/api/orders/id/:orderId', async (req, res) => {
     const { orderId } = req.params;
     const { status } = req.body;
     
-    const validStatuses = ['nowe', 'w-realizacji', 'gotowe', 'anulowane'];
+    const validStatuses = ['oczekuje-na-platnosc', 'oplacone', 'w-realizacji', 'gotowe', 'anulowane'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ error: 'Nieprawidłowy status' });
     }

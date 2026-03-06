@@ -18,10 +18,17 @@ const checkoutFormElement = document.getElementById("checkoutForm") as HTMLFormE
 const checkoutSummaryListElement = document.getElementById("checkoutSummaryList");
 const checkoutTotalElement = document.getElementById("checkoutTotal");
 const checkoutMessageElement = document.getElementById("checkoutMessage");
-const customerNameElement = document.getElementById("customerName") as HTMLInputElement | null;
 const customerPhoneElement = document.getElementById("customerPhone") as HTMLInputElement | null;
-const customerAddressElement = document.getElementById("customerAddress") as HTMLInputElement | null;
+const parcelLockerCodeElement = document.getElementById("parcelLockerCode") as HTMLInputElement | null;
+const parcelSearchQueryElement = document.getElementById("parcelSearchQuery") as HTMLInputElement | null;
+const openParcelSearchBtnElement = document.getElementById("openParcelSearchBtn") as HTMLButtonElement | null;
 const customerNotesElement = document.getElementById("customerNotes") as HTMLTextAreaElement | null;
+const lastOrderCardElement = document.getElementById("lastOrderCard") as HTMLDivElement | null;
+const lastOrderIdElement = document.getElementById("lastOrderId") as HTMLSpanElement | null;
+const lastOrderTransferTitleElement = document.getElementById("lastOrderTransferTitle") as HTMLSpanElement | null;
+const lastOrderPhoneSuffixElement = document.getElementById("lastOrderPhoneSuffix") as HTMLSpanElement | null;
+const lastOrderLockerElement = document.getElementById("lastOrderLocker") as HTMLSpanElement | null;
+const copyTransferTitleBtnElement = document.getElementById("copyTransferTitleBtn") as HTMLButtonElement | null;
 
 // Sprawdzenie czy wszystkie elementy istnieją
 if (
@@ -33,10 +40,17 @@ if (
   !checkoutSummaryListElement ||
   !checkoutTotalElement ||
   !checkoutMessageElement ||
-  !customerNameElement ||
   !customerPhoneElement ||
-  !customerAddressElement ||
-  !customerNotesElement
+  !parcelLockerCodeElement ||
+  !parcelSearchQueryElement ||
+  !openParcelSearchBtnElement ||
+  !customerNotesElement ||
+  !lastOrderCardElement ||
+  !lastOrderIdElement ||
+  !lastOrderTransferTitleElement ||
+  !lastOrderPhoneSuffixElement ||
+  !lastOrderLockerElement ||
+  !copyTransferTitleBtnElement
 ) {
   console.error("Nie znaleziono wymaganych elementów DOM");
   throw new Error("Brak wymaganych elementów na stronie");
@@ -51,13 +65,21 @@ const checkoutForm: HTMLFormElement = checkoutFormElement;
 const checkoutSummaryList: HTMLElement = checkoutSummaryListElement;
 const checkoutTotal: HTMLElement = checkoutTotalElement;
 const checkoutMessage: HTMLElement = checkoutMessageElement;
-const customerName: HTMLInputElement = customerNameElement;
 const customerPhone: HTMLInputElement = customerPhoneElement;
-const customerAddress: HTMLInputElement = customerAddressElement;
+const parcelLockerCode: HTMLInputElement = parcelLockerCodeElement;
+const parcelSearchQuery: HTMLInputElement = parcelSearchQueryElement;
+const openParcelSearchBtn: HTMLButtonElement = openParcelSearchBtnElement;
 const customerNotes: HTMLTextAreaElement = customerNotesElement;
+const lastOrderCard: HTMLDivElement = lastOrderCardElement;
+const lastOrderId: HTMLSpanElement = lastOrderIdElement;
+const lastOrderTransferTitle: HTMLSpanElement = lastOrderTransferTitleElement;
+const lastOrderPhoneSuffix: HTMLSpanElement = lastOrderPhoneSuffixElement;
+const lastOrderLocker: HTMLSpanElement = lastOrderLockerElement;
+const copyTransferTitleBtn: HTMLButtonElement = copyTransferTitleBtnElement;
 
 // Stałe konfiguracyjne
 const STORAGE_KEY = "galaretkarnia_cart";
+const ORDER_REF_STORAGE_KEY = "galaretkarnia_last_order_ref";
 const TOAST_DURATION = 2000;
 
 // Auto-detect API URL based on environment
@@ -107,6 +129,59 @@ const scrollToCheckout = () => {
 
 const getCartTotalPrice = () => cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
+interface LastOrderReference {
+  orderRef: string;
+  transferTitle: string;
+  phoneSuffix: string;
+  parcelLockerCode: string;
+}
+
+const formatOrderRef = (orderId: string) => orderId.slice(-8).toUpperCase();
+
+const createTransferTitle = (orderRef: string) => `Opłata za zamówienie nr: ${orderRef}`;
+
+const normalizePhone = (phone: string) => phone.replace(/\D/g, "");
+
+const getPhoneSuffix = (phone: string) => {
+  const digits = normalizePhone(phone);
+  return digits.slice(-4);
+};
+
+const isPhoneValid = (phone: string) => normalizePhone(phone).length === 9;
+
+const isParcelLockerCodeValid = (code: string) => /^[A-Z]{3}\d{2}[A-Z0-9]?$/.test(code.toUpperCase());
+
+const saveLastOrderReference = (data: LastOrderReference) => {
+  localStorage.setItem(ORDER_REF_STORAGE_KEY, JSON.stringify(data));
+};
+
+const loadLastOrderReference = (): LastOrderReference | null => {
+  const saved = localStorage.getItem(ORDER_REF_STORAGE_KEY);
+  if (!saved) return null;
+
+  try {
+    return JSON.parse(saved) as LastOrderReference;
+  } catch (error) {
+    console.error("Błąd przy ładowaniu numeru ostatniego zamówienia", error);
+    return null;
+  }
+};
+
+const renderLastOrderReference = () => {
+  const lastOrder = loadLastOrderReference();
+
+  if (!lastOrder) {
+    lastOrderCard.hidden = true;
+    return;
+  }
+
+  lastOrderId.textContent = lastOrder.orderRef;
+  lastOrderTransferTitle.textContent = lastOrder.transferTitle;
+  lastOrderPhoneSuffix.textContent = lastOrder.phoneSuffix;
+  lastOrderLocker.textContent = lastOrder.parcelLockerCode;
+  lastOrderCard.hidden = false;
+};
+
 const renderCheckoutSummary = () => {
   checkoutSummaryList.innerHTML = "";
 
@@ -128,8 +203,6 @@ const renderCheckoutSummary = () => {
   checkoutTotal.textContent = getCartTotalPrice().toString();
 };
 
-const isPhoneValid = (phone: string) => /^[0-9+()\-\s]{7,20}$/.test(phone);
-
 const handleCheckoutSubmit = async (event: SubmitEvent) => {
   event.preventDefault();
 
@@ -138,26 +211,20 @@ const handleCheckoutSubmit = async (event: SubmitEvent) => {
     return;
   }
 
-  const name = customerName.value.trim();
   const phone = customerPhone.value.trim();
-  const address = customerAddress.value.trim();
+  const phoneSuffix = getPhoneSuffix(phone);
+  const parcelLocker = parcelLockerCode.value.trim().toUpperCase();
   const notes = customerNotes.value.trim();
 
-  if (name.length < 3) {
-    setCheckoutMessage("Podaj poprawne imię i nazwisko.", true);
-    customerName.focus();
-    return;
-  }
-
   if (!isPhoneValid(phone)) {
-    setCheckoutMessage("Podaj poprawny numer telefonu.", true);
+    setCheckoutMessage("Podaj poprawny numer telefonu (9 cyfr).", true);
     customerPhone.focus();
     return;
   }
 
-  if (address.length < 6) {
-    setCheckoutMessage("Podaj pełny adres dostawy.", true);
-    customerAddress.focus();
+  if (!isParcelLockerCodeValid(parcelLocker)) {
+    setCheckoutMessage("Podaj poprawny kod paczkomatu (np. WAW01A).", true);
+    parcelLockerCode.focus();
     return;
   }
 
@@ -173,12 +240,13 @@ const handleCheckoutSubmit = async (event: SubmitEvent) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name,
           phone,
-          address,
+          phoneSuffix,
+          parcelLockerCode: parcelLocker,
           notes: notes || undefined,
           items: cart,
           total: getCartTotalPrice(),
+          paymentMethod: "bank_transfer",
         }),
       }
     );
@@ -190,16 +258,27 @@ const handleCheckoutSubmit = async (event: SubmitEvent) => {
     }
 
     // Success!
+    const orderRef = formatOrderRef(data.orderId);
+    const transferTitle = createTransferTitle(orderRef);
+
     setCheckoutMessage(
-      `✅ Zamówienie przyjęte!<br><strong style="font-size: 1.2em;">ID: ${data.orderId.slice(-8).toUpperCase()}</strong><br><small>Skontaktujemy się w ciągu 30 minut</small>`,
+      `✅ Zamówienie zapisane.<br><strong style="font-size: 1.2em;">Numer: ${orderRef}</strong><br><small>Realizacja po zaksięgowaniu wpłaty. Tytuł przelewu: ${transferTitle}</small>`,
       false
     );
     showToast("Zamówienie przyjęte!");
+
+    saveLastOrderReference({
+      orderRef,
+      transferTitle,
+      phoneSuffix,
+      parcelLockerCode: parcelLocker,
+    });
+    renderLastOrderReference();
     
     // Clear form
-    customerName.value = "";
     customerPhone.value = "";
-    customerAddress.value = "";
+    parcelLockerCode.value = "";
+    parcelSearchQuery.value = "";
     customerNotes.value = "";
     
     // Clear cart
@@ -422,8 +501,34 @@ addButtons.forEach(btn => {
   });
 });
 
+openParcelSearchBtn.addEventListener("click", () => {
+  const query = parcelSearchQuery.value.trim();
+  const targetUrl = query
+    ? `https://www.google.com/maps/search/paczkomat+${encodeURIComponent(query)}`
+    : "https://inpost.pl/znajdz-paczkomat";
+
+  window.open(targetUrl, "_blank", "noopener,noreferrer");
+});
+
+copyTransferTitleBtn.addEventListener("click", async () => {
+  const value = lastOrderTransferTitle.textContent?.trim();
+  if (!value || value === "-") {
+    showToast("Brak tytułu przelewu do skopiowania");
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(value);
+    showToast("Skopiowano tytuł przelewu");
+  } catch (error) {
+    console.error("Nie udało się skopiować tytułu przelewu", error);
+    showToast("Nie udało się skopiować tytułu");
+  }
+});
+
 // Załaduj koszyk z localStorage przy starcie
 checkoutForm.addEventListener("submit", handleCheckoutSubmit);
 loadCart();
 renderCart();
+renderLastOrderReference();
 

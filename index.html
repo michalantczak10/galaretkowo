@@ -161,20 +161,32 @@
       <h2>Zamówienie</h2>
       <div class="checkout-layout">
         <form id="checkoutForm" class="checkout-form" novalidate>
-          <label for="customerName">Imię i nazwisko</label>
-          <input id="customerName" name="customerName" type="text" autocomplete="name" required />
+          <p class="checkout-note">Realizujemy wyłącznie zamówienia opłacone przelewem i dostarczane do paczkomatu wskazanego przez klienta.</p>
 
-          <label for="customerPhone">Telefon</label>
-          <input id="customerPhone" name="customerPhone" type="tel" autocomplete="tel" required />
+          <label for="customerPhone">Telefon do odbioru paczkomatu</label>
+          <input id="customerPhone" name="customerPhone" type="tel" autocomplete="tel" placeholder="Np. 500600700" required />
 
-          <label for="customerAddress">Adres dostawy</label>
-          <input id="customerAddress" name="customerAddress" type="text" autocomplete="street-address" required />
+          <label for="parcelSearchQuery">Wyszukaj paczkomat</label>
+          <div class="parcel-search-row">
+            <input id="parcelSearchQuery" name="parcelSearchQuery" type="text" placeholder="Np. Warszawa, Mokotów" />
+            <button type="button" id="openParcelSearchBtn">Szukaj</button>
+          </div>
+
+          <label for="parcelLockerCode">Kod paczkomatu</label>
+          <input id="parcelLockerCode" name="parcelLockerCode" type="text" placeholder="Np. WAW01A" required />
 
           <label for="customerNotes">Uwagi do zamówienia (opcjonalnie)</label>
-          <textarea id="customerNotes" name="customerNotes" rows="4" placeholder="Np. proszę o dostawę po 18:00"></textarea>
+          <textarea id="customerNotes" name="customerNotes" rows="4" placeholder="Np. kod domofonu, preferowane godziny odbioru"></textarea>
 
           <button type="submit" id="submitOrderBtn">Zamawiam</button>
           <p id="checkoutMessage" class="checkout-message" aria-live="polite"></p>
+
+          <div id="lastOrderCard" class="last-order-card" hidden>
+            <p><strong>Twój ostatni numer zamówienia:</strong> <span id="lastOrderId">-</span></p>
+            <p><strong>Tytuł przelewu:</strong> <span id="lastOrderTransferTitle">-</span></p>
+            <p><strong>Paczkomat:</strong> <span id="lastOrderLocker">-</span> • <strong>Telefon (końcówka):</strong> <span id="lastOrderPhoneSuffix">-</span></p>
+            <button type="button" id="copyTransferTitleBtn">Kopiuj tytuł przelewu</button>
+          </div>
         </form>
 
         <aside class="checkout-summary" aria-label="Podsumowanie zamówienia">
@@ -190,8 +202,8 @@
       <div class="trust-grid">
         <p>📞 Telefon: +48 500 600 700</p>
         <p>🕒 Godziny przyjmowania zamówień: pon. - sob. 08:00 - 20:00</p>
-        <p>🚚 Obszar dostawy: Warszawa i okolice do 20 km</p>
-        <p>✅ Zamówienia realizujemy po potwierdzeniu telefonicznym.</p>
+        <p>📦 Dostawa wyłącznie do paczkomatów wskazanych przez klienta.</p>
+        <p>✅ Realizacja zamówienia po zaksięgowaniu wpłaty na konto.</p>
       </div>
     </section>
 

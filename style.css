@@ -668,6 +668,16 @@ button:active {
   gap: 10px;
 }
 
+.checkout-note {
+  margin: 0 0 8px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  background: #fff6d8;
+  border: 1px solid #f0d995;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
 .checkout-form label {
   font-weight: bold;
   margin-top: 5px;
@@ -705,6 +715,17 @@ button:active {
   background: var(--color-primary-dark);
 }
 
+.parcel-search-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.parcel-search-row button {
+  white-space: nowrap;
+  padding: 12px 16px;
+}
+
 .checkout-summary h3 {
   margin-top: 0;
 }
@@ -734,6 +755,24 @@ button:active {
 
 .checkout-message.is-success {
   color: #1f7a1f;
+}
+
+.last-order-card {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: #f8f8f8;
+}
+
+.last-order-card p {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.last-order-card p:last-of-type {
+  margin-bottom: 12px;
 }
 
 /* ===== KONTAKT / DOSTAWA ===== */
@@ -1097,6 +1136,10 @@ button:active {
 
   .hero-brand-text {
     font-size: 0.95rem;
+  }
+
+  .parcel-search-row {
+    grid-template-columns: 1fr;
   }
   
   .about,
