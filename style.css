@@ -363,10 +363,14 @@ button:active {
 }
 
 /* ===== MINI KOSZYK ===== */
+.cart-dock {
+  width: min(1200px, calc(100% - 80px));
+  margin: 0 auto 16px;
+}
+
 .mini-cart {
-  position: fixed;
-  top: 20px;
-  right: 20px;
+  position: sticky;
+  top: 12px;
   background: var(--color-white);
   padding: 18px;
   border-radius: var(--radius-md);
@@ -375,9 +379,10 @@ button:active {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  max-width: 350px;
+  max-width: 100%;
+  width: 100%;
   box-sizing: border-box;
-  z-index: 999;
+  z-index: 995;
   transition: transform var(--transition);
 }
 
@@ -419,18 +424,20 @@ button:active {
 
 /* ===== LISTA KOSZYKA ===== */
 #cartList {
-  position: fixed;
-  top: 98px;
-  right: 20px;
+  position: relative;
+  top: auto;
+  right: auto;
   background: var(--color-white);
   padding: 15px;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
-  max-width: 350px;
+  margin-top: 12px;
+  max-width: 100%;
+  width: 100%;
   box-sizing: border-box;
-  max-height: calc(100vh - 120px);
+  max-height: min(46vh, 430px);
   overflow-y: auto;
-  z-index: 998;
+  z-index: 994;
 }
 
 .cart-item {
@@ -1076,19 +1083,23 @@ button:active {
   .checkout-layout {
     padding: 0 25px;
   }
+
+  .cart-dock {
+    width: min(1200px, calc(100% - 50px));
+  }
   
   .mini-cart {
     position: relative;
-    margin: 20px auto;
-    max-width: 600px;
+    margin: 0;
+    max-width: 100%;
     top: 0;
     right: 0;
   }
   
   #cartList {
     position: relative;
-    margin: 20px auto;
-    max-width: 600px;
+    margin: 12px 0 0;
+    max-width: 100%;
     top: 0;
     right: 0;
     max-height: 400px;
@@ -1212,7 +1223,7 @@ button:active {
   
   .mini-cart {
     position: relative;
-    margin: 15px auto;
+    margin: 0;
     max-width: 100%;
     padding: 15px;
     gap: 12px;
@@ -1235,7 +1246,7 @@ button:active {
   
   #cartList {
     position: relative;
-    margin: 15px auto;
+    margin: 12px 0 0;
     max-width: 100%;
     padding: 15px;
     max-height: 400px;
@@ -1244,6 +1255,10 @@ button:active {
 
 /* Mobile portrait (480px - 599px) */
 @media (max-width: 599px) {
+  .cart-dock {
+    width: min(1200px, calc(100% - 40px));
+  }
+
   .product-grid {
     grid-template-columns: 1fr;
     gap: 15px;
