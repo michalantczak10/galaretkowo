@@ -377,8 +377,7 @@ button:active {
   box-shadow: var(--shadow-md);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  justify-content: flex-start;
   max-width: 100%;
   width: 100%;
   box-sizing: border-box;
@@ -395,31 +394,11 @@ button:active {
   outline-offset: 2px;
 }
 
-.mini-cart-icon {
-  width: 36px;
-  height: 36px;
-}
-
-.mini-cart-info {
-  display: flex;
-  gap: 30px;
-  align-items: center;
-}
-
-.mini-cart-count {
-  background: var(--color-primary);
-  color: var(--color-white);
-  padding: 8px 12px;
-  border-radius: 20px;
-  font-weight: bold;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-#miniCount,
-#miniTotal {
-  display: inline-block;
+.mini-cart-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-primary);
 }
 
 /* ===== LISTA KOSZYKA ===== */
@@ -528,11 +507,11 @@ button:active {
 }
 
 .cart-summary {
-  margin-top: 20px;
-  padding-top: 10px;
+  margin-top: 10px;
+  padding-top: 12px;
   border-top: 2px solid var(--color-border);
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 18px;
+  font-weight: 800;
   color: var(--color-primary);
 }
 

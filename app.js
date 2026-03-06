@@ -3,8 +3,6 @@ let cart = [];
 // Pobranie elementów z HTML z bezpieczną obsługą null
 const addButtons = document.querySelectorAll(".addToCartBtn");
 const miniCartElement = document.querySelector(".mini-cart");
-const miniCountElement = document.getElementById("miniCount");
-const miniTotalElement = document.getElementById("miniTotal");
 const cartListElement = document.getElementById("cartList");
 const checkoutFormElement = document.getElementById("checkoutForm");
 const checkoutSummaryListElement = document.getElementById("checkoutSummaryList");
@@ -31,8 +29,6 @@ const lastOrderLockerElement = document.getElementById("lastOrderLocker");
 const copyTransferTitleBtnElement = document.getElementById("copyTransferTitleBtn");
 // Sprawdzenie czy wszystkie elementy istnieją
 if (!miniCartElement ||
-    !miniCountElement ||
-    !miniTotalElement ||
     !cartListElement ||
     !checkoutFormElement ||
     !checkoutSummaryListElement ||
@@ -62,8 +58,6 @@ if (!miniCartElement ||
 }
 // Przypisanie do zmiennych z pewnymi typami
 const miniCart = miniCartElement;
-const miniCount = miniCountElement;
-const miniTotal = miniTotalElement;
 const cartList = cartListElement;
 const checkoutForm = checkoutFormElement;
 const checkoutSummaryList = checkoutSummaryListElement;
@@ -405,6 +399,7 @@ const loadCart = () => {
 // Wyświetlanie listy produktów
 function renderMiniCartList() {
     cartList.innerHTML = "";
+    const totalPrice = getCartTotalPrice();
     if (cart.length === 0) {
         const empty = document.createElement("p");
         empty.textContent = "Koszyk jest pusty — dodaj pierwszą galaretkę 😊";
@@ -470,7 +465,6 @@ function renderMiniCartList() {
         row.appendChild(controls);
         cartList.appendChild(row);
     });
-    const totalPrice = getCartTotalPrice();
     const remainingToTarget = Math.max(0, freeDeliveryThreshold - totalPrice);
     const progressPercent = Math.min(100, Math.round((totalPrice / freeDeliveryThreshold) * 100));
     const progressBox = document.createElement("div");
@@ -494,6 +488,10 @@ function renderMiniCartList() {
     trustNote.className = "cart-trust-note";
     trustNote.textContent = "Świeża produkcja, klasyczny smak, bez konserwantów.";
     cartList.appendChild(trustNote);
+    const cartTotal = document.createElement("div");
+    cartTotal.className = "cart-summary";
+    cartTotal.textContent = `Razem do zapłaty: ${totalPrice} zł`;
+    cartList.appendChild(cartTotal);
     // Przycisk wyczyść koszyk
     const clearBtn = document.createElement("button");
     clearBtn.className = "cart-clear-btn";
@@ -508,17 +506,7 @@ function renderMiniCartList() {
 }
 // Przeliczanie koszyka
 function renderCart() {
-    let totalQty = 0;
-    let totalPrice = 0;
-    cart.forEach(item => {
-        totalQty += item.qty;
-        totalPrice += item.price * item.qty;
-    });
-    miniCount.textContent = totalQty.toString();
-    miniTotal.textContent = totalPrice.toString();
     // Animacje mini‑koszyka
-    animate(miniCount, "bump");
-    animate(miniTotal, "bump");
     animate(miniCart, "mini-cart-shake");
     animate(miniCart, "mini-cart-pulse");
     renderMiniCartList();

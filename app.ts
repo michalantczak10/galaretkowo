@@ -11,8 +11,6 @@ let cart: CartItem[] = [];
 // Pobranie elementów z HTML z bezpieczną obsługą null
 const addButtons = document.querySelectorAll(".addToCartBtn") as NodeListOf<HTMLButtonElement>;
 const miniCartElement = document.querySelector(".mini-cart");
-const miniCountElement = document.getElementById("miniCount");
-const miniTotalElement = document.getElementById("miniTotal");
 const cartListElement = document.getElementById("cartList");
 const checkoutFormElement = document.getElementById("checkoutForm") as HTMLFormElement | null;
 const checkoutSummaryListElement = document.getElementById("checkoutSummaryList");
@@ -41,8 +39,6 @@ const copyTransferTitleBtnElement = document.getElementById("copyTransferTitleBt
 // Sprawdzenie czy wszystkie elementy istnieją
 if (
   !miniCartElement ||
-  !miniCountElement ||
-  !miniTotalElement ||
   !cartListElement ||
   !checkoutFormElement ||
   !checkoutSummaryListElement ||
@@ -74,8 +70,6 @@ if (
 
 // Przypisanie do zmiennych z pewnymi typami
 const miniCart: HTMLElement = miniCartElement as HTMLElement;
-const miniCount: HTMLElement = miniCountElement;
-const miniTotal: HTMLElement = miniTotalElement;
 const cartList: HTMLElement = cartListElement;
 const checkoutForm: HTMLFormElement = checkoutFormElement;
 const checkoutSummaryList: HTMLElement = checkoutSummaryListElement;
@@ -487,6 +481,7 @@ const loadCart = () => {
 // Wyświetlanie listy produktów
 function renderMiniCartList() {
   cartList.innerHTML = "";
+  const totalPrice = getCartTotalPrice();
 
   if (cart.length === 0) {
     const empty = document.createElement("p");
@@ -571,7 +566,6 @@ function renderMiniCartList() {
     cartList.appendChild(row);
   });
 
-  const totalPrice = getCartTotalPrice();
   const remainingToTarget = Math.max(0, freeDeliveryThreshold - totalPrice);
   const progressPercent = Math.min(100, Math.round((totalPrice / freeDeliveryThreshold) * 100));
 
@@ -602,6 +596,11 @@ function renderMiniCartList() {
   trustNote.textContent = "Świeża produkcja, klasyczny smak, bez konserwantów.";
   cartList.appendChild(trustNote);
 
+  const cartTotal = document.createElement("div");
+  cartTotal.className = "cart-summary";
+  cartTotal.textContent = `Razem do zapłaty: ${totalPrice} zł`;
+  cartList.appendChild(cartTotal);
+
   // Przycisk wyczyść koszyk
   const clearBtn = document.createElement("button");
   clearBtn.className = "cart-clear-btn";
@@ -618,20 +617,7 @@ function renderMiniCartList() {
 
 // Przeliczanie koszyka
 function renderCart() {
-  let totalQty = 0;
-  let totalPrice = 0;
-
-  cart.forEach(item => {
-    totalQty += item.qty;
-    totalPrice += item.price * item.qty;
-  });
-
-  miniCount.textContent = totalQty.toString();
-  miniTotal.textContent = totalPrice.toString();
-
   // Animacje mini‑koszyka
-  animate(miniCount, "bump");
-  animate(miniTotal, "bump");
   animate(miniCart, "mini-cart-shake");
   animate(miniCart, "mini-cart-pulse");
 
