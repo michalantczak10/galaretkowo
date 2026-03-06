@@ -116,6 +116,7 @@ app.post('/api/orders', async (req, res) => {
       items,
       total,
       status: 'nowe', // Status: nowe, w-realizacji, gotowe, anulowane
+      environment: process.env.NODE_ENV || 'development', // 'development' lub 'production'
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -137,12 +138,13 @@ app.post('/api/orders', async (req, res) => {
       .map(item => `- ${item.name}: ${item.qty} słoik(ów) × ${item.price} zł = ${item.qty * item.price} zł`)
       .join('\n');
 
+    const isDev = process.env.NODE_ENV === 'development';
     const mailOptions = {
       to: process.env.ORDER_EMAIL || 'kontakt@galaretkarnia.pl',
       from: process.env.RESEND_FROM_EMAIL || 'noreply@galaretkarnia.onresend.com',
-      subject: `📦 Nowe zamówienie - ${orderId.slice(-6).toUpperCase()}`,
+      subject: `${isDev ? '[TEST]' : '📦'} Nowe zamówienie - ${orderId.slice(-6).toUpperCase()}`,
       html: `
-        <h2>📦 Nowe zamówienie</h2>
+        <h2>${isDev ? '[TEST] 🧪' : '📦'} Nowe zamówienie</h2>
         <p style="background: #e3f2fd; padding: 10px; border-radius: 5px;">
           <strong>ID Zamówienia:</strong> ${orderId}
         </p>
