@@ -684,7 +684,8 @@ button:active {
 }
 
 .checkout-form input,
-.checkout-form textarea {
+.checkout-form textarea,
+.checkout-form select {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   padding: 12px;
@@ -694,10 +695,49 @@ button:active {
 }
 
 .checkout-form input:focus,
-.checkout-form textarea:focus {
+.checkout-form textarea:focus,
+.checkout-form select:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(179, 0, 0, 0.1);
+}
+
+.payment-instructions {
+  margin: 0 0 8px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  background: #f5f8ff;
+  border: 1px solid #c9d6ff;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.payment-instructions p {
+  margin: 0 0 6px;
+}
+
+.payment-instructions p:last-child {
+  margin-bottom: 0;
+}
+
+.optional-account-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.optional-account-toggle input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+#optionalAccountFields {
+  display: grid;
+  gap: 8px;
 }
 
 .checkout-form button {

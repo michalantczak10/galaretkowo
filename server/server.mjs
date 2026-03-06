@@ -90,10 +90,39 @@ const formatOrderRef = (orderId) => orderId.slice(-8).toUpperCase();
 
 const createTransferTitle = (orderRef) => `Opłata za zamówienie nr: ${orderRef}`;
 
+const PAYMENT_CONFIG = {
+  accountNumber: process.env.BANK_ACCOUNT_NUMBER || '00 0000 0000 0000 0000 0000 0000',
+  accountHolder: process.env.BANK_ACCOUNT_HOLDER || 'Galaretkarnia',
+  blikPhone: process.env.BLIK_PHONE || '+48 500 600 700'
+};
+
+const PAYMENT_METHODS = ['bank_transfer', 'blik'];
+
+const getPaymentTarget = (method) => {
+  if (method === 'blik') {
+    return `Telefon BLIK: ${PAYMENT_CONFIG.blikPhone}`;
+  }
+
+  return `${PAYMENT_CONFIG.accountHolder}, konto: ${PAYMENT_CONFIG.accountNumber}`;
+};
+
+const isEmailValid = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || ''));
+
+app.get('/api/payment-config', (req, res) => {
+  res.json({
+    success: true,
+    payment: {
+      accountNumber: PAYMENT_CONFIG.accountNumber,
+      accountHolder: PAYMENT_CONFIG.accountHolder,
+      blikPhone: PAYMENT_CONFIG.blikPhone
+    }
+  });
+});
+
 // POST /api/orders - Accept order, save to DB and send email to owner
 app.post('/api/orders', async (req, res) => {
   try {
-    const { phone, parcelLockerCode, notes, items, total, paymentMethod } = req.body;
+    const { phone, parcelLockerCode, notes, items, total, paymentMethod, createOptionalAccount, optionalAccountEmail } = req.body;
 
     // Validation
     if (!phone || !isPhoneValid(phone)) {
@@ -112,8 +141,14 @@ app.post('/api/orders', async (req, res) => {
       return res.status(400).json({ error: 'Nieprawidłowa kwota.' });
     }
 
-    if (paymentMethod && paymentMethod !== 'bank_transfer') {
-      return res.status(400).json({ error: 'Obsługujemy tylko płatność przelewem.' });
+    const selectedPaymentMethod = paymentMethod || 'bank_transfer';
+
+    if (!PAYMENT_METHODS.includes(selectedPaymentMethod)) {
+      return res.status(400).json({ error: 'Nieobsługiwana metoda płatności.' });
+    }
+
+    if (createOptionalAccount && optionalAccountEmail && !isEmailValid(optionalAccountEmail)) {
+      return res.status(400).json({ error: 'Podaj poprawny e-mail do konta lub zostaw pole puste.' });
     }
 
     const normalizedParcelLockerCode = parcelLockerCode.toUpperCase();
@@ -127,9 +162,13 @@ app.post('/api/orders', async (req, res) => {
       notes: notes || '',
       items,
       total,
-      paymentMethod: 'bank_transfer',
+      paymentMethod: selectedPaymentMethod,
       paymentStatus: 'oczekiwanie-na-wplate',
       status: 'oczekuje-na-platnosc', // Status: oczekuje-na-platnosc, oplacone, w-realizacji, gotowe, anulowane
+      optionalAccount: {
+        requested: Boolean(createOptionalAccount),
+        email: createOptionalAccount ? (optionalAccountEmail || '') : ''
+      },
       environment: process.env.NODE_ENV || 'development', // 'development' lub 'production'
       createdAt: new Date(),
       updatedAt: new Date()
@@ -140,6 +179,7 @@ app.post('/api/orders', async (req, res) => {
     const orderId = result.insertedId.toString();
     const orderRef = formatOrderRef(orderId);
     const transferTitle = createTransferTitle(orderRef);
+    const paymentTarget = getPaymentTarget(selectedPaymentMethod);
 
     // IMMEDIATELY send success response to client (don't wait for email)
     res.json({
@@ -147,6 +187,8 @@ app.post('/api/orders', async (req, res) => {
       orderId: orderId,
       orderRef,
       transferTitle,
+      paymentMethod: selectedPaymentMethod,
+      paymentTarget,
       message: 'Zamówienie zapisane. Realizacja po zaksięgowaniu wpłaty.',
       status: 'oczekuje-na-platnosc',
       paymentStatus: 'oczekiwanie-na-wplate'
@@ -174,12 +216,14 @@ app.post('/api/orders', async (req, res) => {
         <pre>${itemsText}</pre>
         <hr>
         <p><strong>📌 Do zapłaty:</strong> ${total} zł</p>
-        <p><strong>💳 Płatność:</strong> przelew tradycyjny (oczekiwanie na zaksięgowanie)</p>
+        <p><strong>💳 Płatność:</strong> ${selectedPaymentMethod === 'blik' ? 'BLIK na telefon' : 'przelew tradycyjny'} (oczekiwanie na zaksięgowanie)</p>
+        <p><strong>🏦 Dane płatności:</strong> ${paymentTarget}</p>
         <hr>
         <h3>Dane klienta:</h3>
         <p><strong>📞 Telefon:</strong> ${phone}</p>
         <p><strong>📞 Końcówka telefonu:</strong> ${phoneSuffix}</p>
         <p><strong>📦 Paczkomat:</strong> ${normalizedParcelLockerCode}</p>
+        <p><strong>👤 Konto klienta (opcjonalne):</strong> ${createOptionalAccount ? `TAK${optionalAccountEmail ? ` (${optionalAccountEmail})` : ''}` : 'NIE'}</p>
         <p><strong>💬 Uwagi:</strong> ${notes || 'Brak'}</p>
         <hr>
         <p style="color: #666; font-size: 12px;">

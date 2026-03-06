@@ -18,14 +18,21 @@ const checkoutFormElement = document.getElementById("checkoutForm") as HTMLFormE
 const checkoutSummaryListElement = document.getElementById("checkoutSummaryList");
 const checkoutTotalElement = document.getElementById("checkoutTotal");
 const checkoutMessageElement = document.getElementById("checkoutMessage");
+const paymentMethodElement = document.getElementById("paymentMethod") as HTMLSelectElement | null;
+const paymentInstructionsElement = document.getElementById("paymentInstructions") as HTMLDivElement | null;
 const customerPhoneElement = document.getElementById("customerPhone") as HTMLInputElement | null;
 const parcelLockerCodeElement = document.getElementById("parcelLockerCode") as HTMLInputElement | null;
 const parcelSearchQueryElement = document.getElementById("parcelSearchQuery") as HTMLInputElement | null;
 const openParcelSearchBtnElement = document.getElementById("openParcelSearchBtn") as HTMLButtonElement | null;
+const createOptionalAccountElement = document.getElementById("createOptionalAccount") as HTMLInputElement | null;
+const optionalAccountFieldsElement = document.getElementById("optionalAccountFields") as HTMLDivElement | null;
+const optionalAccountEmailElement = document.getElementById("optionalAccountEmail") as HTMLInputElement | null;
 const customerNotesElement = document.getElementById("customerNotes") as HTMLTextAreaElement | null;
 const lastOrderCardElement = document.getElementById("lastOrderCard") as HTMLDivElement | null;
 const lastOrderIdElement = document.getElementById("lastOrderId") as HTMLSpanElement | null;
+const lastOrderPaymentMethodElement = document.getElementById("lastOrderPaymentMethod") as HTMLSpanElement | null;
 const lastOrderTransferTitleElement = document.getElementById("lastOrderTransferTitle") as HTMLSpanElement | null;
+const lastOrderPaymentTargetElement = document.getElementById("lastOrderPaymentTarget") as HTMLSpanElement | null;
 const lastOrderPhoneSuffixElement = document.getElementById("lastOrderPhoneSuffix") as HTMLSpanElement | null;
 const lastOrderLockerElement = document.getElementById("lastOrderLocker") as HTMLSpanElement | null;
 const copyTransferTitleBtnElement = document.getElementById("copyTransferTitleBtn") as HTMLButtonElement | null;
@@ -40,14 +47,21 @@ if (
   !checkoutSummaryListElement ||
   !checkoutTotalElement ||
   !checkoutMessageElement ||
+  !paymentMethodElement ||
+  !paymentInstructionsElement ||
   !customerPhoneElement ||
   !parcelLockerCodeElement ||
   !parcelSearchQueryElement ||
   !openParcelSearchBtnElement ||
+  !createOptionalAccountElement ||
+  !optionalAccountFieldsElement ||
+  !optionalAccountEmailElement ||
   !customerNotesElement ||
   !lastOrderCardElement ||
   !lastOrderIdElement ||
+  !lastOrderPaymentMethodElement ||
   !lastOrderTransferTitleElement ||
+  !lastOrderPaymentTargetElement ||
   !lastOrderPhoneSuffixElement ||
   !lastOrderLockerElement ||
   !copyTransferTitleBtnElement
@@ -65,14 +79,21 @@ const checkoutForm: HTMLFormElement = checkoutFormElement;
 const checkoutSummaryList: HTMLElement = checkoutSummaryListElement;
 const checkoutTotal: HTMLElement = checkoutTotalElement;
 const checkoutMessage: HTMLElement = checkoutMessageElement;
+const paymentMethod: HTMLSelectElement = paymentMethodElement;
+const paymentInstructions: HTMLDivElement = paymentInstructionsElement;
 const customerPhone: HTMLInputElement = customerPhoneElement;
 const parcelLockerCode: HTMLInputElement = parcelLockerCodeElement;
 const parcelSearchQuery: HTMLInputElement = parcelSearchQueryElement;
 const openParcelSearchBtn: HTMLButtonElement = openParcelSearchBtnElement;
+const createOptionalAccount: HTMLInputElement = createOptionalAccountElement;
+const optionalAccountFields: HTMLDivElement = optionalAccountFieldsElement;
+const optionalAccountEmail: HTMLInputElement = optionalAccountEmailElement;
 const customerNotes: HTMLTextAreaElement = customerNotesElement;
 const lastOrderCard: HTMLDivElement = lastOrderCardElement;
 const lastOrderId: HTMLSpanElement = lastOrderIdElement;
+const lastOrderPaymentMethod: HTMLSpanElement = lastOrderPaymentMethodElement;
 const lastOrderTransferTitle: HTMLSpanElement = lastOrderTransferTitleElement;
+const lastOrderPaymentTarget: HTMLSpanElement = lastOrderPaymentTargetElement;
 const lastOrderPhoneSuffix: HTMLSpanElement = lastOrderPhoneSuffixElement;
 const lastOrderLocker: HTMLSpanElement = lastOrderLockerElement;
 const copyTransferTitleBtn: HTMLButtonElement = copyTransferTitleBtnElement;
@@ -82,11 +103,28 @@ const STORAGE_KEY = "galaretkarnia_cart";
 const ORDER_REF_STORAGE_KEY = "galaretkarnia_last_order_ref";
 const TOAST_DURATION = 2000;
 
+type PaymentMethod = "bank_transfer" | "blik";
+
+interface PaymentConfig {
+  accountNumber: string;
+  accountHolder: string;
+  blikPhone: string;
+}
+
+let paymentConfig: PaymentConfig = {
+  accountNumber: "00 0000 0000 0000 0000 0000 0000",
+  accountHolder: "Galaretkarnia",
+  blikPhone: "+48 500 600 700",
+};
+
 // Auto-detect API URL based on environment
 const isDevelopment = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 const API_URL = isDevelopment 
   ? "http://localhost:3001/api/orders" 
   : "https://galaretkarnia.onrender.com/api/orders";
+const PAYMENT_CONFIG_URL = isDevelopment
+  ? "http://localhost:3001/api/payment-config"
+  : "https://galaretkarnia.onrender.com/api/payment-config";
 
 // Funkcja animacji - usuwa klasę, wymusza reflow i dodaje ponownie
 const animate = (el: HTMLElement, cls: string) => {
@@ -131,7 +169,9 @@ const getCartTotalPrice = () => cart.reduce((sum, item) => sum + item.price * it
 
 interface LastOrderReference {
   orderRef: string;
+  paymentMethod: PaymentMethod;
   transferTitle: string;
+  paymentTarget: string;
   phoneSuffix: string;
   parcelLockerCode: string;
 }
@@ -139,6 +179,53 @@ interface LastOrderReference {
 const formatOrderRef = (orderId: string) => orderId.slice(-8).toUpperCase();
 
 const createTransferTitle = (orderRef: string) => `Opłata za zamówienie nr: ${orderRef}`;
+
+const getPaymentMethodLabel = (method: PaymentMethod) =>
+  method === "blik" ? "BLIK na telefon" : "Przelew tradycyjny";
+
+const getPaymentTargetText = (method: PaymentMethod) =>
+  method === "blik"
+    ? `Telefon BLIK: ${paymentConfig.blikPhone}`
+    : `${paymentConfig.accountHolder}, konto: ${paymentConfig.accountNumber}`;
+
+const renderPaymentInstructions = () => {
+  const method = paymentMethod.value as PaymentMethod;
+
+  if (method === "blik") {
+    paymentInstructions.innerHTML = `
+      <p><strong>Płatność BLIK:</strong> wykonaj przelew na telefon.</p>
+      <p><strong>Numer telefonu BLIK:</strong> ${paymentConfig.blikPhone}</p>
+      <p><small>W tytule wpisz numer zamówienia po jego utworzeniu.</small></p>
+    `;
+    return;
+  }
+
+  paymentInstructions.innerHTML = `
+    <p><strong>Płatność przelewem tradycyjnym:</strong></p>
+    <p><strong>Odbiorca:</strong> ${paymentConfig.accountHolder}</p>
+    <p><strong>Numer konta:</strong> ${paymentConfig.accountNumber}</p>
+    <p><small>Tytuł przelewu otrzymasz po złożeniu zamówienia.</small></p>
+  `;
+};
+
+const loadPaymentConfig = async () => {
+  try {
+    const response = await fetch(PAYMENT_CONFIG_URL);
+    if (!response.ok) return;
+
+    const data = await response.json();
+    if (data?.payment) {
+      paymentConfig = {
+        accountNumber: data.payment.accountNumber || paymentConfig.accountNumber,
+        accountHolder: data.payment.accountHolder || paymentConfig.accountHolder,
+        blikPhone: data.payment.blikPhone || paymentConfig.blikPhone,
+      };
+      renderPaymentInstructions();
+    }
+  } catch (error) {
+    console.error("Nie udało się pobrać danych płatności", error);
+  }
+};
 
 const normalizePhone = (phone: string) => phone.replace(/\D/g, "");
 
@@ -175,8 +262,13 @@ const renderLastOrderReference = () => {
     return;
   }
 
+  const savedPaymentMethod: PaymentMethod =
+    lastOrder.paymentMethod === "blik" ? "blik" : "bank_transfer";
+
   lastOrderId.textContent = lastOrder.orderRef;
+  lastOrderPaymentMethod.textContent = getPaymentMethodLabel(savedPaymentMethod);
   lastOrderTransferTitle.textContent = lastOrder.transferTitle;
+  lastOrderPaymentTarget.textContent = lastOrder.paymentTarget || getPaymentTargetText(savedPaymentMethod);
   lastOrderPhoneSuffix.textContent = lastOrder.phoneSuffix;
   lastOrderLocker.textContent = lastOrder.parcelLockerCode;
   lastOrderCard.hidden = false;
@@ -214,6 +306,9 @@ const handleCheckoutSubmit = async (event: SubmitEvent) => {
   const phone = customerPhone.value.trim();
   const phoneSuffix = getPhoneSuffix(phone);
   const parcelLocker = parcelLockerCode.value.trim().toUpperCase();
+  const selectedPaymentMethod = paymentMethod.value as PaymentMethod;
+  const wantsOptionalAccount = createOptionalAccount.checked;
+  const optionalEmail = optionalAccountEmail.value.trim();
   const notes = customerNotes.value.trim();
 
   if (!isPhoneValid(phone)) {
@@ -225,6 +320,12 @@ const handleCheckoutSubmit = async (event: SubmitEvent) => {
   if (!isParcelLockerCodeValid(parcelLocker)) {
     setCheckoutMessage("Podaj poprawny kod paczkomatu (np. WAW01A).", true);
     parcelLockerCode.focus();
+    return;
+  }
+
+  if (wantsOptionalAccount && optionalEmail.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(optionalEmail)) {
+    setCheckoutMessage("Podaj poprawny adres e-mail do konta lub zostaw pole puste.", true);
+    optionalAccountEmail.focus();
     return;
   }
 
@@ -246,7 +347,9 @@ const handleCheckoutSubmit = async (event: SubmitEvent) => {
           notes: notes || undefined,
           items: cart,
           total: getCartTotalPrice(),
-          paymentMethod: "bank_transfer",
+          paymentMethod: selectedPaymentMethod,
+          createOptionalAccount: wantsOptionalAccount,
+          optionalAccountEmail: wantsOptionalAccount ? optionalEmail || undefined : undefined,
         }),
       }
     );
@@ -258,18 +361,22 @@ const handleCheckoutSubmit = async (event: SubmitEvent) => {
     }
 
     // Success!
-    const orderRef = formatOrderRef(data.orderId);
-    const transferTitle = createTransferTitle(orderRef);
+    const orderRef = data.orderRef || formatOrderRef(data.orderId);
+    const transferTitle = data.transferTitle || createTransferTitle(orderRef);
+    const paymentTarget = data.paymentTarget || getPaymentTargetText(selectedPaymentMethod);
+    const paymentMethodLabel = getPaymentMethodLabel(selectedPaymentMethod);
 
     setCheckoutMessage(
-      `✅ Zamówienie zapisane.<br><strong style="font-size: 1.2em;">Numer: ${orderRef}</strong><br><small>Realizacja po zaksięgowaniu wpłaty. Tytuł przelewu: ${transferTitle}</small>`,
+      `✅ Zamówienie zapisane.<br><strong style="font-size: 1.2em;">Numer: ${orderRef}</strong><br><small>Metoda: ${paymentMethodLabel}. Realizacja po zaksięgowaniu wpłaty. Tytuł płatności: ${transferTitle}</small>`,
       false
     );
     showToast("Zamówienie przyjęte!");
 
     saveLastOrderReference({
       orderRef,
+      paymentMethod: selectedPaymentMethod,
       transferTitle,
+      paymentTarget,
       phoneSuffix,
       parcelLockerCode: parcelLocker,
     });
@@ -279,6 +386,9 @@ const handleCheckoutSubmit = async (event: SubmitEvent) => {
     customerPhone.value = "";
     parcelLockerCode.value = "";
     parcelSearchQuery.value = "";
+    createOptionalAccount.checked = false;
+    optionalAccountFields.hidden = true;
+    optionalAccountEmail.value = "";
     customerNotes.value = "";
     
     // Clear cart
@@ -526,9 +636,22 @@ copyTransferTitleBtn.addEventListener("click", async () => {
   }
 });
 
+paymentMethod.addEventListener("change", () => {
+  renderPaymentInstructions();
+});
+
+createOptionalAccount.addEventListener("change", () => {
+  optionalAccountFields.hidden = !createOptionalAccount.checked;
+  if (!createOptionalAccount.checked) {
+    optionalAccountEmail.value = "";
+  }
+});
+
 // Załaduj koszyk z localStorage przy starcie
 checkoutForm.addEventListener("submit", handleCheckoutSubmit);
 loadCart();
 renderCart();
+renderPaymentInstructions();
+void loadPaymentConfig();
 renderLastOrderReference();
 
