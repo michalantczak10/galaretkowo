@@ -93,9 +93,9 @@ const STORAGE_KEY = "galaretkarnia_cart";
 const ORDER_REF_STORAGE_KEY = "galaretkarnia_last_order_ref";
 const TOAST_DURATION = 2000;
 let paymentConfig = {
-    accountNumber: "00 0000 0000 0000 0000 0000 0000",
+    accountNumber: "60 1140 2004 0000 3102 4831 8846",
     accountHolder: "Galaretkarnia",
-    blikPhone: "+48 500 600 700",
+    blikPhone: "+48 794 535 366",
 };
 // Auto-detect API URL based on environment
 const isDevelopment = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";

@@ -91,9 +91,9 @@ const formatOrderRef = (orderId) => orderId.slice(-8).toUpperCase();
 const createTransferTitle = (orderRef) => `Opłata za zamówienie nr: ${orderRef}`;
 
 const PAYMENT_CONFIG = {
-  accountNumber: process.env.BANK_ACCOUNT_NUMBER || '00 0000 0000 0000 0000 0000 0000',
+  accountNumber: process.env.BANK_ACCOUNT_NUMBER || '60 1140 2004 0000 3102 4831 8846',
   accountHolder: process.env.BANK_ACCOUNT_HOLDER || 'Galaretkarnia',
-  blikPhone: process.env.BLIK_PHONE || '+48 500 600 700'
+  blikPhone: process.env.BLIK_PHONE || '+48 794 535 366'
 };
 
 const PAYMENT_METHODS = ['bank_transfer', 'blik'];
