@@ -383,9 +383,9 @@ button:active {
   width: min(1200px, calc(100% - 80px));
   margin: 24px auto 16px;
   z-index: 995;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   padding: 18px;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
