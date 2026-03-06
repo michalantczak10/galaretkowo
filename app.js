@@ -92,6 +92,7 @@ const copyTransferTitleBtn = copyTransferTitleBtnElement;
 const STORAGE_KEY = "galaretkarnia_cart";
 const ORDER_REF_STORAGE_KEY = "galaretkarnia_last_order_ref";
 const TOAST_DURATION = 2000;
+const CART_VALUE_TARGET = 120;
 let paymentConfig = {
     accountNumber: "60 1140 2004 0000 3102 4831 8846",
     accountHolder: "Galaretkarnia",
@@ -399,8 +400,8 @@ function renderMiniCartList() {
     cartList.innerHTML = "";
     if (cart.length === 0) {
         const empty = document.createElement("p");
-        empty.textContent = "Koszyk jest pusty";
-        empty.classList.add("fade-in");
+        empty.textContent = "Koszyk jest pusty — dodaj pierwszą galaretkę 😊";
+        empty.classList.add("fade-in", "cart-empty-state");
         cartList.appendChild(empty);
         return;
     }
@@ -422,7 +423,14 @@ function renderMiniCartList() {
         name.textContent = item.name;
         const details = document.createElement("div");
         details.classList.add("cart-item-details");
-        details.textContent = `${item.qty} szt. × ${item.price} zł = ${item.qty * item.price} zł`;
+        const unitLine = document.createElement("span");
+        unitLine.className = "cart-item-unit";
+        unitLine.textContent = `${item.qty} szt. × ${item.price} zł`;
+        const subtotalLine = document.createElement("span");
+        subtotalLine.className = "cart-item-subtotal";
+        subtotalLine.textContent = `Razem: ${item.qty * item.price} zł`;
+        details.appendChild(unitLine);
+        details.appendChild(subtotalLine);
         const controls = document.createElement("div");
         controls.classList.add("cart-item-controls");
         // Przycisk minus
@@ -455,6 +463,30 @@ function renderMiniCartList() {
         row.appendChild(controls);
         cartList.appendChild(row);
     });
+    const totalPrice = getCartTotalPrice();
+    const remainingToTarget = Math.max(0, CART_VALUE_TARGET - totalPrice);
+    const progressPercent = Math.min(100, Math.round((totalPrice / CART_VALUE_TARGET) * 100));
+    const progressBox = document.createElement("div");
+    progressBox.className = "cart-progress";
+    const progressLabel = document.createElement("p");
+    progressLabel.className = "cart-progress-label";
+    progressLabel.textContent =
+        remainingToTarget > 0
+            ? `Do progu wygodnego zamówienia (${CART_VALUE_TARGET} zł) brakuje ${remainingToTarget} zł.`
+            : `Świetnie! Osiągnięto próg ${CART_VALUE_TARGET} zł.`;
+    const progressTrack = document.createElement("div");
+    progressTrack.className = "cart-progress-track";
+    const progressBar = document.createElement("div");
+    progressBar.className = "cart-progress-bar";
+    progressBar.style.width = `${progressPercent}%`;
+    progressTrack.appendChild(progressBar);
+    progressBox.appendChild(progressLabel);
+    progressBox.appendChild(progressTrack);
+    cartList.appendChild(progressBox);
+    const trustNote = document.createElement("p");
+    trustNote.className = "cart-trust-note";
+    trustNote.textContent = "Świeża produkcja, klasyczny smak, bez konserwantów.";
+    cartList.appendChild(trustNote);
     // Przycisk wyczyść koszyk
     const clearBtn = document.createElement("button");
     clearBtn.className = "cart-clear-btn";
@@ -463,7 +495,7 @@ function renderMiniCartList() {
     cartList.appendChild(clearBtn);
     const checkoutBtn = document.createElement("button");
     checkoutBtn.className = "cart-checkout-btn";
-    checkoutBtn.textContent = "Przejdź do zamówienia";
+    checkoutBtn.textContent = "Zamawiam teraz";
     checkoutBtn.addEventListener("click", scrollToCheckout);
     cartList.appendChild(checkoutBtn);
 }
@@ -509,6 +541,9 @@ addButtons.forEach(btn => {
             cart.push({ name, price, qty: 1 });
         }
         renderCart();
+        if (window.innerWidth <= 767) {
+            miniCart.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
         showToast(`${name} dodany do koszyka!`);
     });
 });
