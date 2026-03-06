@@ -497,8 +497,7 @@ function renderMiniCartList() {
         const row = document.createElement("div");
         row.classList.add("cart-item", "fade-in");
         const img = document.createElement("img");
-        const imgName = item.name.toLowerCase().replace(/ /g, "-");
-        img.src = `img/${imgName}.svg`;
+        img.src = item.image;
         img.alt = item.name;
         img.onerror = () => {
             // Fallback gdy obrazek nie istnieje
@@ -619,7 +618,8 @@ addButtons.forEach(btn => {
     btn.addEventListener("click", () => {
         const name = btn.dataset.product;
         const priceStr = btn.dataset.price;
-        if (!name || !priceStr) {
+        const image = btn.dataset.image;
+        if (!name || !priceStr || !image) {
             console.error("Brak danych produktu w przycisku");
             return;
         }
@@ -634,7 +634,7 @@ addButtons.forEach(btn => {
             existing.qty++;
         }
         else {
-            cart.push({ name, price, qty: 1 });
+            cart.push({ name, price, qty: 1, image });
         }
         renderCart();
         if (window.innerWidth <= 767) {

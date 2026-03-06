@@ -3,6 +3,7 @@ interface CartItem {
   name: string;
   price: number;
   qty: number;
+  image: string;
 }
 
 // Tablica koszyka
@@ -606,8 +607,7 @@ function renderMiniCartList() {
     row.classList.add("cart-item", "fade-in");
 
     const img = document.createElement("img");
-    const imgName = item.name.toLowerCase().replace(/ /g, "-");
-    img.src = `img/${imgName}.svg`;
+    img.src = item.image;
     img.alt = item.name;
     img.onerror = () => {
       // Fallback gdy obrazek nie istnieje
@@ -760,8 +760,9 @@ addButtons.forEach(btn => {
   btn.addEventListener("click", () => {
     const name = btn.dataset.product;
     const priceStr = btn.dataset.price;
+    const image = btn.dataset.image;
 
-    if (!name || !priceStr) {
+    if (!name || !priceStr || !image) {
       console.error("Brak danych produktu w przycisku");
       return;
     }
@@ -779,7 +780,7 @@ addButtons.forEach(btn => {
     if (existing) {
       existing.qty++;
     } else {
-      cart.push({ name, price, qty: 1 });
+      cart.push({ name, price, qty: 1, image });
     }
 
     renderCart();
