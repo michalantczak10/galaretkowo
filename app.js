@@ -201,26 +201,15 @@ const createTransferTitle = (orderRef) => `Opłata za zamówienie nr: ${orderRef
 const getPaymentMethodLabel = (method) => {
     if (method === "blik")
         return "BLIK na telefon";
-    if (method === "stripe_online")
-        return "Karta płatnicza / BLIK online (Stripe)";
     return "Przelew tradycyjny";
 };
 const getPaymentTargetText = (method) => {
     if (method === "blik")
         return `Telefon BLIK: ${paymentConfig.blikPhone}`;
-    if (method === "stripe_online")
-        return "Płatność została przetworzona online";
     return `${paymentConfig.accountHolder}, konto: ${paymentConfig.accountNumber}`;
 };
 const renderPaymentInstructions = () => {
     const method = paymentMethod.value;
-    if (method === "stripe_online") {
-        paymentInstructions.innerHTML = `
-      <p><strong>Płatność online:</strong> Zostaniesz przekierowany do bezpiecznej bramki Stripe.</p>
-      <p><small>⚡ Akceptujemy karty płatnicze, BLIK online, Przelewy24 i więcej.</small></p>
-    `;
-        return;
-    }
     if (method === "blik") {
         paymentInstructions.innerHTML = `
       <p><strong>Płatność BLIK:</strong> wykonaj przelew na telefon.</p>
@@ -377,55 +366,6 @@ const handleCheckoutSubmit = async (event) => {
     const productsTotal = getCartTotalPrice();
     const deliveryInfo = getDeliveryInfo(productsTotal);
     const totalWithDelivery = productsTotal + deliveryInfo.finalCost;
-    // Handle Stripe online payment
-    if (selectedPaymentMethod === 'stripe_online') {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/create-checkout-session`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    items: cart,
-                    productsTotal,
-                    deliveryCost: deliveryInfo.finalCost,
-                    total: totalWithDelivery,
-                    orderData: {
-                        phone,
-                        phoneSuffix,
-                        parcelLockerCode: parcelLocker,
-                        notes: notes || undefined,
-                        parcelLabel: deliveryInfo.parcelLabel,
-                        createOptionalAccount: wantsOptionalAccount,
-                        optionalAccountEmail: wantsOptionalAccount ? optionalEmail || undefined : undefined,
-                    }
-                }),
-            });
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.error || "Błąd przy tworzeniu sesji płatności");
-            }
-            // Save cart data temporarily for restoration after payment
-            sessionStorage.setItem('pendingOrderData', JSON.stringify({
-                phone,
-                parcelLocker,
-                notes,
-                wantsOptionalAccount,
-                optionalEmail
-            }));
-            // Redirect to Stripe Checkout
-            window.location.href = data.url;
-            return;
-        }
-        catch (error) {
-            const errorMsg = error instanceof Error ? error.message : "Nieznany błąd";
-            setCheckoutMessage(`❌ ${errorMsg}`, true);
-            showToast("Błąd przy inicjalizacji płatności");
-            if (submitBtn)
-                submitBtn.disabled = false;
-            return;
-        }
-    }
     // Handle traditional payment methods (bank transfer, BLIK)
     try {
         const response = await fetch(API_URL, {
