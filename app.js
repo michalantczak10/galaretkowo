@@ -598,7 +598,11 @@ function renderMiniCartList() {
     cartSummary.appendChild(productsLine);
     cartSummary.appendChild(deliveryLine);
     cartSummary.appendChild(totalLine);
-    cartList.appendChild(cartSummary);
+
+    // Footer: summary + actions side-by-side (desktop) or stacked (mobile)
+    const footer = document.createElement("div");
+    footer.className = "cart-footer";
+
     // Przycisk wyczyść koszyk i zamów - umieszczone obok siebie
     const actions = document.createElement("div");
     actions.className = "cart-actions";
@@ -615,7 +619,10 @@ function renderMiniCartList() {
 
     actions.appendChild(clearBtn);
     actions.appendChild(checkoutBtn);
-    cartList.appendChild(actions);
+
+    footer.appendChild(cartSummary);
+    footer.appendChild(actions);
+    cartList.appendChild(footer);
 }
 // Przeliczanie koszyka
 function renderCart() {
