@@ -619,25 +619,6 @@ button:active {
   font-size: 14px;
 }
 
-/* Cart actions: place clear + checkout buttons side-by-side */
-.cart-actions {
-  display: flex;
-  gap: 10px;
-  align-items: stretch;
-  margin-top: 12px;
-}
-.cart-actions .cart-clear-btn,
-.cart-actions .cart-checkout-btn {
-  width: auto;
-  flex: 1 1 0;
-  margin-top: 0; /* reset per-button margin */
-}
-@media (max-width: 600px) {
-  .cart-actions {
-    flex-direction: column;
-  }
-}
-
 .cart-clear-btn {
   width: 100%;
   background: #dc3545;
