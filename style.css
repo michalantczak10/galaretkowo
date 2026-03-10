@@ -638,31 +638,6 @@ button:active {
   }
 }
 
-/* Footer wrapping summary and actions */
-.cart-footer {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  margin-top: 12px;
-}
-.cart-footer .cart-summary {
-  flex: 1 1 0;
-}
-.cart-footer .cart-actions {
-  flex: 0 0 260px;
-  align-self: flex-end;
-}
-@media (max-width: 800px) {
-  .cart-footer {
-    flex-direction: column;
-  }
-  .cart-footer .cart-actions {
-    flex: none;
-    width: 100%;
-    align-self: stretch;
-  }
-}
-
 .cart-clear-btn {
   width: 100%;
   background: #dc3545;
