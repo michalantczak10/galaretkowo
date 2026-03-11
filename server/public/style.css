@@ -498,7 +498,7 @@ button:active {
   z-index: 995;
   background: rgb(255 255 255 / 75%);
   backdrop-filter: blur(24px);
-  padding: 10px;
+  padding: 18px;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
   border-bottom: 1px solid rgb(0 0 0 / 6%);
@@ -525,7 +525,7 @@ button:active {
 
 .mini-cart-title {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 1.05rem;
   font-weight: 800;
   color: var(--color-primary);
 }
@@ -536,13 +536,10 @@ button:active {
   top: auto;
   right: auto;
   background: var(--color-white);
-  padding: 8px;
+  padding: 15px;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
-  margin-top: 10px;
-  /* Keep cart compact but allow scrolling when it grows */
-  max-height: 360px;
-  overflow-y: auto;
+  margin-top: 12px;
   max-width: 100%;
   width: 100%;
   box-sizing: border-box;
@@ -553,11 +550,11 @@ button:active {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
-  padding: 6px;
+  gap: 10px;
+  padding: 10px;
   background: var(--color-white);
   border-radius: var(--radius-md);
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   box-shadow: var(--shadow-sm);
 }
 
@@ -576,23 +573,23 @@ button:active {
 
 .cart-item-name {
   font-weight: bold;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .cart-item-details {
   display: grid;
-  gap: 4px;
-  font-size: 13px;
+  gap: 3px;
+  font-size: 14px;
   color: var(--color-text-light);
 }
 
 .cart-item-unit {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--color-text-light);
 }
 
 .cart-item-subtotal {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--color-primary);
 }
@@ -751,20 +748,20 @@ button:active {
 @media (max-width: 440px) {
   .cart-item {
     gap: 8px;
-    padding: 8px;
+    padding: 10px;
   }
 
   .cart-item img {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
   }
 
   .cart-item-name {
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .cart-item-details {
-    font-size: 12px;
+    font-size: 13px;
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
@@ -790,8 +787,8 @@ button:active {
   }
 
   .cart-item img {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     grid-column: 1 / 2;
     grid-row: 1 / 2;
     margin: 0;
