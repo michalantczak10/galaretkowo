@@ -1,6 +1,6 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": ".",
+  "buildCommand": "echo \"skip build\"",
+  "outputDirectory": "server/public",
   "env": {
     "API_URL": "https://galaretkarnia.onrender.com/api/orders"
   }
