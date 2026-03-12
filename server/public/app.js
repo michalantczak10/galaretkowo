@@ -310,7 +310,6 @@ if (checkoutSubmitBtn) {
 }
 var checkoutClearBtn = document.getElementById('clearCartBtn');
 if (checkoutClearBtn) {
-    checkoutClearBtn.classList.add('cart-clear-btn');
     checkoutClearBtn.addEventListener('click', clearCart);
 }
                 blikPhone: data.payment.blikPhone || paymentConfig.blikPhone,

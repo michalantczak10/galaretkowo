@@ -894,6 +894,30 @@ button:active {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
+
+/* Secondary (muted) clear button used in the Checkout section */
+.checkout-actions-row .secondary-clear-btn {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  padding: 12px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all var(--transition);
+}
+
+.checkout-actions-row .secondary-clear-btn:hover {
+  background: rgba(0,0,0,0.03);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.checkout-actions-row .secondary-clear-btn:active {
+  transform: scale(0.98);
+}
  
 /* ===== BENEFITS (3 POWODY) ===== */
 .benefits {

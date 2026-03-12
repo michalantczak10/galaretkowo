@@ -945,7 +945,6 @@ if (checkoutSubmitBtn) {
 }
 const checkoutClearBtn = document.getElementById('clearCartBtn') as HTMLButtonElement | null;
 if (checkoutClearBtn) {
-  checkoutClearBtn.classList.add('cart-clear-btn');
   checkoutClearBtn.addEventListener('click', clearCart);
 }
 
