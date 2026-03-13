@@ -143,7 +143,6 @@ app.use(express.json({ limit: '64kb' }));
 // Serve static files from `public` directory inside the server folder
 const publicDir = join(__dirname, 'public');
 app.use(express.static(publicDir, { maxAge: '7d', immutable: true, dotfiles: 'ignore', index: false }));
-
 // Serve images and favicons from project root via dedicated routes (keeps other files private)
 app.use('/img', express.static(join(projectRoot, 'img'), { maxAge: '7d', immutable: true, dotfiles: 'ignore' }));
 app.use('/favicon', express.static(join(projectRoot, 'favicon'), { maxAge: '7d', immutable: true, dotfiles: 'ignore' }));
