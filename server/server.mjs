@@ -1,6 +1,8 @@
 import express from 'express';
 // Resend SDK removed from dependencies; emails will be skipped unless configured elsewhere
 import dotenv from 'dotenv';
+import { Resend } from 'resend';
+import { MongoClient } from 'mongodb';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 // MongoDB driver removed from dependencies; DB integration disabled in this build
@@ -12,6 +14,7 @@ import responseTime from 'response-time';
 
 dotenv.config();
 
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -19,8 +22,21 @@ const PORT = process.env.PORT || 3001;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/galaretkarnia';
 let ordersCollection;
 let mongoClient = null;
-// DB disabled in this build — keep ordersCollection null so DB-backed endpoints return 503
-ordersCollection = null;
+
+async function connectToMongo() {
+  try {
+    mongoClient = new MongoClient(MONGODB_URI);
+    await mongoClient.connect();
+    const db = mongoClient.db();
+    ordersCollection = db.collection('orders');
+    console.log('✅ Połączono z MongoDB');
+  } catch (error) {
+    ordersCollection = null;
+    console.error('❌ Błąd połączenia z MongoDB:', error);
+  }
+}
+
+connectToMongo();
 
 // Get directory path
 const __filename = fileURLToPath(import.meta.url);
@@ -78,7 +94,8 @@ app.use('/favicon', express.static(join(projectRoot, 'favicon'), { maxAge: '7d',
 // Email configuration - Resend API (optional)
 let resend = null;
 if (process.env.RESEND_API_KEY) {
-  console.warn('⚠️ RESEND_API_KEY ustawiony, ale Resend SDK nie jest zainstalowany — wysyłka e-maili jest wyłączona w tej wersji.');
+  resend = new Resend(process.env.RESEND_API_KEY);
+  console.log('✅ Resend SDK zainstalowany i skonfigurowany.');
 }
 
 // Validation helper

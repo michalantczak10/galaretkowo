@@ -87,7 +87,7 @@ const STORAGE_KEY = "galaretkarnia_cart";
 const ORDER_REF_STORAGE_KEY = "galaretkarnia_last_order_ref";
 const TOAST_DURATION = 2000;
 // Pixel offset when scrolling to the cart (positive number subtracts from element top)
-const CART_SCROLL_OFFSET = 20;
+const CART_SCROLL_OFFSET = 80;
 let freeDeliveryThreshold = 50;
 let parcelSizes = [
     { name: "A", label: "Paczkomat A (mały)", maxItems: 3, cost: 13 },
@@ -121,12 +121,10 @@ const animate = (el, cls) => {
 const showToast = (message, type = "default", actionLabel, actionCallback) => {
     const toast = document.createElement("div");
     toast.className = `toast toast-show ${type === "success" ? "toast-success" : ""}`.trim();
-
     const msg = document.createElement("span");
     msg.className = "toast-message";
     msg.innerHTML = message;
     toast.appendChild(msg);
-
     if (actionLabel && typeof actionCallback === "function") {
         const actionBtn = document.createElement("button");
         actionBtn.className = "toast-action";
@@ -138,28 +136,30 @@ const showToast = (message, type = "default", actionLabel, actionCallback) => {
             catch (e) {
                 console.error("Toast action failed", e);
             }
-            if (toast.parentElement) toast.parentElement.removeChild(toast);
+            if (toast.parentElement)
+                toast.parentElement.removeChild(toast);
         });
         toast.appendChild(actionBtn);
     }
-
     document.body.appendChild(toast);
     setTimeout(() => {
-        if (!document.body.contains(toast)) return;
+        if (!document.body.contains(toast))
+            return;
         toast.classList.remove("toast-show");
         setTimeout(() => {
-            if (toast.parentElement) toast.parentElement.removeChild(toast);
+            if (toast.parentElement)
+                toast.parentElement.removeChild(toast);
         }, 300);
     }, TOAST_DURATION);
 };
-
 // Dismiss any existing toast whose message contains the provided text
 const dismissToastContaining = (text) => {
     document.querySelectorAll('.toast').forEach(t => {
         const msgEl = t.querySelector('.toast-message');
         const msg = msgEl ? (msgEl.textContent || '') : '';
-        if (msg.indexOf(text) !== -1) {
-            if (t.parentElement) t.parentElement.removeChild(t);
+        if (msg.includes(text)) {
+            if (t.parentElement)
+                t.parentElement.removeChild(t);
         }
     });
 };
@@ -173,18 +173,14 @@ const showConfirmModal = (title, message) => {
     return new Promise((resolve) => {
         const overlay = document.createElement('div');
         overlay.className = 'confirm-modal-overlay';
-
         const dialog = document.createElement('div');
         dialog.className = 'confirm-modal';
-
         const h = document.createElement('h3');
         h.textContent = title;
         const p = document.createElement('p');
         p.textContent = message;
-
         const actions = document.createElement('div');
         actions.className = 'confirm-actions';
-
         const btnCancel = document.createElement('button');
         btnCancel.className = 'btn btn-cancel';
         btnCancel.textContent = 'Anuluj';
@@ -192,7 +188,6 @@ const showConfirmModal = (title, message) => {
             document.body.removeChild(overlay);
             resolve(false);
         });
-
         const btnConfirm = document.createElement('button');
         btnConfirm.className = 'btn btn-confirm';
         btnConfirm.textContent = 'Tak, wyczyść';
@@ -200,10 +195,8 @@ const showConfirmModal = (title, message) => {
             document.body.removeChild(overlay);
             resolve(true);
         });
-
         actions.appendChild(btnCancel);
         actions.appendChild(btnConfirm);
-
         dialog.appendChild(h);
         dialog.appendChild(p);
         dialog.appendChild(actions);
@@ -304,40 +297,34 @@ const renderPaymentInstructions = () => {
   `;
 };
 const loadPaymentConfig = async () => {
-        try {
-            var checkoutSubmitBtn = document.getElementById('submitOrderBtn');
-            if (checkoutSubmitBtn) {
-                checkoutSubmitBtn.classList.add('cart-checkout-btn');
-            }
-            var checkoutClearBtn = document.getElementById('clearCartBtn');
-            if (checkoutClearBtn) {
-                checkoutClearBtn.addEventListener('click', clearCart);
-            }
-            const response = await fetch(PAYMENT_CONFIG_URL);
-            if (!response.ok) return;
-            const data = await response.json();
-            if (data?.payment) {
-                paymentConfig = {
-                    accountNumber: data.payment.accountNumber || paymentConfig.accountNumber,
-                    accountHolder: data.payment.accountHolder || paymentConfig.accountHolder,
-                    blikPhone: data.payment.blikPhone || paymentConfig.blikPhone,
-                };
-                renderPaymentInstructions();
-            }
-            if (data?.cart?.freeDeliveryThreshold) {
-                const candidate = Number(data.cart.freeDeliveryThreshold);
-                if (Number.isFinite(candidate) && candidate > 0) {
-                    freeDeliveryThreshold = candidate;
-                }
-            }
-            if (data?.cart?.parcelSizes && Array.isArray(data.cart.parcelSizes)) {
-                parcelSizes = data.cart.parcelSizes;
-            }
-            renderCart();
-        } catch (error) {
-            console.error("Nie udało się pobrać danych płatności", error);
+    try {
+        const response = await fetch(PAYMENT_CONFIG_URL);
+        if (!response.ok)
+            return;
+        const data = await response.json();
+        if (data?.payment) {
+            paymentConfig = {
+                accountNumber: data.payment.accountNumber || paymentConfig.accountNumber,
+                accountHolder: data.payment.accountHolder || paymentConfig.accountHolder,
+                blikPhone: data.payment.blikPhone || paymentConfig.blikPhone,
+            };
+            renderPaymentInstructions();
         }
-    };
+        if (data?.cart?.freeDeliveryThreshold) {
+            const candidate = Number(data.cart.freeDeliveryThreshold);
+            if (Number.isFinite(candidate) && candidate > 0) {
+                freeDeliveryThreshold = candidate;
+            }
+        }
+        if (data?.cart?.parcelSizes && Array.isArray(data.cart.parcelSizes)) {
+            parcelSizes = data.cart.parcelSizes;
+        }
+        renderCart();
+    }
+    catch (error) {
+        console.error("Nie udało się pobrać danych płatności", error);
+    }
+};
 const normalizePhone = (phone) => phone.replace(/\D/g, "");
 const getPhoneSuffix = (phone) => {
     const digits = normalizePhone(phone);
@@ -550,27 +537,26 @@ const clearCart = async () => {
     if (cart.length === 0)
         return;
     const confirmed = await showConfirmModal("Wyczyść koszyk", "Na pewno chcesz wyczyścić cały koszyk?");
-    if (!confirmed) return;
-
+    if (!confirmed)
+        return;
     // Zapisz kopię koszyka, aby umożliwić cofnięcie
-    const prev = cart.map(i => (Object.assign({}, i)));
+    const prev = cart.map(i => ({ ...i }));
     cart = [];
     renderCart();
-    
-        // Zresetuj formularz zamówienia i ukryj pola opcjonalne
-        const checkoutFormEl = document.getElementById('checkoutForm');
-        if (checkoutFormEl) checkoutFormEl.reset();
-        const optionalFields = document.getElementById('optionalAccountFields');
-        if (optionalFields) optionalFields.hidden = true;
-
+    // Zresetuj formularz zamówienia i ukryj pola opcjonalne
+    const checkoutFormEl = document.getElementById('checkoutForm');
+    if (checkoutFormEl)
+        checkoutFormEl.reset();
+    const optionalFields = document.getElementById('optionalAccountFields');
+    if (optionalFields)
+        optionalFields.hidden = true;
     // Pokazujemy toast z możliwością cofnięcia
-    showToast("✨ Koszyk został wyczyszczony.", "success", "Cofnij", () => {
+    showToast(`✨ Koszyk został wyczyszczony.`, "success", "Cofnij", () => {
         cart = prev;
         renderCart();
         showToast("🟢 Przywrócono koszyk", "success");
         setCheckoutMessage("🧺 Przywrócono zawartość koszyka.", false);
     });
-
     setCheckoutMessage("🧺 Koszyk został wyczyszczony. Możesz dodać produkty ponownie.", true);
 };
 // Funkcja zapisu koszyka do localStorage
@@ -685,17 +671,17 @@ function renderMiniCartList() {
     cartSummary.className = "cart-summary";
     const productsLine = document.createElement("div");
     productsLine.className = "cart-summary-line";
-    productsLine.innerHTML = `<span>Produkty (galaretki):</span><span>&nbsp;${totalPrice}&nbsp;zł</span>`;
+    productsLine.innerHTML = `<span>Produkty (galaretki):</span><span>${totalPrice} zł</span>`;
     const deliveryLine = document.createElement("div");
     deliveryLine.className = "cart-summary-line";
-    const deliveryText = deliveryInfo.finalCost === 0 ? "<strong>Gratis!</strong>&nbsp;" : `${deliveryInfo.finalCost}&nbsp;zł`;
+    const deliveryText = deliveryInfo.finalCost === 0 ? "<strong>Gratis!</strong>" : `${deliveryInfo.finalCost} zł`;
     const parcelInfo = deliveryInfo.numberOfParcels > 1
         ? `${deliveryInfo.numberOfParcels} paczki`
         : `1 paczka`;
     deliveryLine.innerHTML = `<span>Dostawa (${parcelInfo}, ${itemsCount} szt.):</span><span>${deliveryText}</span>`;
     const totalLine = document.createElement("div");
     totalLine.className = "cart-summary-total";
-    totalLine.innerHTML = `<span>Razem do zapłaty:</span><span>${totalWithDelivery}&nbsp;zł</span>`;
+    totalLine.innerHTML = `<span>Razem do zapłaty:</span><span>${totalWithDelivery} zł</span>`;
     cartSummary.appendChild(productsLine);
     cartSummary.appendChild(deliveryLine);
     cartSummary.appendChild(totalLine);
@@ -705,59 +691,12 @@ function renderMiniCartList() {
     clearBtn.className = "cart-clear-btn";
     clearBtn.textContent = "Wyczyść koszyk";
     clearBtn.addEventListener("click", clearCart);
-    // Group action buttons so they appear side-by-side
+    cartList.appendChild(clearBtn);
     const checkoutBtn = document.createElement("button");
     checkoutBtn.className = "cart-checkout-btn";
     checkoutBtn.textContent = "Zamawiam teraz";
     checkoutBtn.addEventListener("click", scrollToCheckout);
-
-    const actions = document.createElement("div");
-    actions.className = "checkout-actions-row cart-actions";
-    actions.appendChild(clearBtn);
-    actions.appendChild(checkoutBtn);
-    cartList.appendChild(actions);
-    // After rendering, adjust items that fit into a single line
-    try {
-        adjustCartItemsSingleLine();
-    }
-    catch (e) {
-        // ignore if helper not yet defined
-    }
-}
-
-// Ensure cart items that fit on one line keep that layout.
-function adjustCartItemsSingleLine() {
-    if (!cartList) return;
-    const rows = cartList.querySelectorAll('.cart-item');
-    rows.forEach(row => {
-        const img = row.querySelector('img');
-        const controls = row.querySelector('.cart-item-controls');
-        const info = row.querySelector('.cart-item-info');
-        if (!info || !img || !controls) return;
-        // Temporarily measure needed width when info is single-line
-        const prevWhite = info.style.whiteSpace;
-        info.style.whiteSpace = 'nowrap';
-        // Needed width: image + controls + info's scrollWidth + small gap
-        const needed = img.offsetWidth + controls.offsetWidth + info.scrollWidth + 16;
-        info.style.whiteSpace = prevWhite || '';
-        if (needed <= row.clientWidth) {
-            row.classList.add('single-line');
-        }
-        else {
-            row.classList.remove('single-line');
-        }
-    });
-}
-
-// Recalculate on resize (debounced)
-{
-    let resizeTimer = null;
-    window.addEventListener('resize', () => {
-        if (resizeTimer) clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            adjustCartItemsSingleLine();
-        }, 120);
-    });
+    cartList.appendChild(checkoutBtn);
 }
 // Przeliczanie koszyka
 function renderCart() {
@@ -784,35 +723,28 @@ addButtons.forEach(btn => {
             return;
         }
         // Szukamy produktu w koszyku
-        const existingIndex = cart.findIndex(item => item.name === name);
-        if (existingIndex !== -1) {
-            // Zwiększ ilość i przenieś pozycję na początek (dynamiczne ustawianie)
-            cart[existingIndex].qty++;
-            const [item] = cart.splice(existingIndex, 1);
-            cart.unshift(item);
+        const existing = cart.find(item => item.name === name);
+        if (existing) {
+            existing.qty++;
         }
         else {
-            // Dodaj nową pozycję na początek listy
-            cart.unshift({ name, price, qty: 1, image });
+            cart.push({ name, price, qty: 1, image });
         }
         renderCart();
         const cartDock = document.querySelector('.cart-dock');
         if (cartDock) {
-            try {
-                var top = cartDock.getBoundingClientRect().top + window.scrollY - CART_SCROLL_OFFSET;
-                window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
-            }
-            catch (err) { }
+            const top = cartDock.getBoundingClientRect().top + window.scrollY - CART_SCROLL_OFFSET;
+            window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
         }
         else if (window.innerWidth <= 767) {
             miniCart.scrollIntoView({ behavior: "smooth", block: "center" });
         }
-                // If a 'cart cleared' message/toast is present, dismiss it when adding a new item
-                dismissToastContaining("Koszyk został wyczyszczony");
-                if (checkoutMessage.innerHTML.indexOf("Koszyk został wyczyszczony") !== -1) {
-                    setCheckoutMessage("", false);
-                }
-                showToast(`${name} dodany do koszyka!`);
+        // If a 'cart cleared' message/toast is present, dismiss it when adding a new item
+        dismissToastContaining("Koszyk został wyczyszczony");
+        if (checkoutMessage.innerHTML.includes("Koszyk został wyczyszczony")) {
+            setCheckoutMessage("", false);
+        }
+        showToast(`${name} dodany do koszyka!`);
     });
 });
 openParcelSearchBtn.addEventListener("click", () => {
@@ -841,6 +773,15 @@ copyTransferTitleBtn.addEventListener("click", async () => {
         showToast("Nie udało się skopiować danych");
     }
 });
+// Static checkout buttons: apply cart button styles and wire the clear action
+const checkoutSubmitBtn = document.getElementById('submitOrderBtn');
+if (checkoutSubmitBtn) {
+    checkoutSubmitBtn.classList.add('cart-checkout-btn');
+}
+const checkoutClearBtn = document.getElementById('clearCartBtn');
+if (checkoutClearBtn) {
+    checkoutClearBtn.addEventListener('click', clearCart);
+}
 paymentMethod.addEventListener("change", () => {
     renderPaymentInstructions();
 });
