@@ -505,8 +505,17 @@ const handleCheckoutSubmit = async (event) => {
         // Clear cart
         cart = [];
         renderCart();
-        // Scroll to top
-        window.scrollTo({ top: 0, behavior: "smooth" });
+            // Scroll to order message if not visible
+                setTimeout(() => {
+                    const msg = checkoutMessage;
+                    if (msg && msg.textContent && msg.textContent.trim().length > 0) {
+                        const rect = msg.getBoundingClientRect();
+                        const isVisible = rect.top >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
+                        if (!isVisible) {
+                            msg.scrollIntoView({ behavior: "smooth", block: "center" });
+                        }
+                    }
+                }, 300);
     }
     catch (error) {
         const errorMsg = error instanceof Error ? error.message : "Nieznany błąd";
@@ -818,7 +827,7 @@ addButtons.forEach(btn => {
 openParcelSearchBtn.addEventListener("click", () => {
     const query = parcelSearchQuery.value.trim();
     const targetUrl = query
-        ? `https://www.google.com/maps/search/paczkomat+${encodeURIComponent(query)}`
+        ? `https://inpost.pl/znajdz-paczkomat?query=${encodeURIComponent(query)}`
         : "https://inpost.pl/znajdz-paczkomat";
     window.open(targetUrl, "_blank", "noopener,noreferrer");
 });
