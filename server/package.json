@@ -7,9 +7,8 @@
   "scripts": {
     "start": "node server.mjs",
     "dev": "node --watch server.mjs",
-    "nodemon": "nodemon server.mjs"
-      ,
-      "build": "echo 'No build step required'"
+    "nodemon": "nodemon server.mjs",
+    "build": "echo 'No build step required'"
   },
   "dependencies": {
     "compression": "^1.7.4",

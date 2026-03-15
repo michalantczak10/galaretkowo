@@ -140,6 +140,7 @@
 
           <label for="customerPhone">Telefon do odbioru paczkomatu</label>
           <input id="customerPhone" name="customerPhone" type="tel" autocomplete="tel" placeholder="Np. 500600700" required />
+          <div class="input-error" id="phoneError" aria-live="polite"></div>
 
           <label for="parcelSearchQuery">Wyszukaj paczkomat</label>
           <div class="parcel-search-row">
@@ -149,6 +150,7 @@
 
           <label for="parcelLockerCode">Kod paczkomatu</label>
           <input id="parcelLockerCode" name="parcelLockerCode" type="text" placeholder="Np. WAW01A" required />
+          <div class="input-error" id="lockerError" aria-live="polite"></div>
 
           <label for="customerNotes">Uwagi do zamówienia (opcjonalnie)</label>
           <textarea id="customerNotes" name="customerNotes" rows="4" placeholder="Np. kod domofonu, preferowane godziny odbioru"></textarea>
@@ -161,13 +163,13 @@
           <div id="optionalAccountFields" hidden>
             <label for="optionalAccountEmail">E-mail do konta (opcjonalnie)</label>
             <input id="optionalAccountEmail" name="optionalAccountEmail" type="email" autocomplete="email" placeholder="Np. jan@przyklad.pl" />
+            <div class="input-error" id="emailError" aria-live="polite"></div>
           </div>
 
           <div class="checkout-actions-row">
             <button type="button" id="clearCartBtn" class="secondary-clear-btn">Wyczyść koszyk</button>
             <button type="submit" id="submitOrderBtn" class="cart-checkout-btn">Zamawiam teraz</button>
           </div>
-          <p id="checkoutMessage" class="checkout-message" aria-live="polite"></p>
 
           <div id="lastOrderCard" class="last-order-card" hidden>
             <p><strong>Twój ostatni numer zamówienia:</strong> <span id="lastOrderId">-</span></p>

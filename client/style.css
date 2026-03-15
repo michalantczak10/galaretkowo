@@ -1,3 +1,9 @@
+.input-error {
+  color: #b00020;
+  font-size: 0.95em;
+  margin-top: 4px;
+  min-height: 18px;
+}
 /* ===== CHECKOUT ACTIONS ROW (NAPRAWIONY) ===== */
 .checkout-actions-row {
   display: flex;
@@ -1167,19 +1173,6 @@ button:active {
   color: var(--color-primary);
 }
 
-.checkout-message {
-  margin: 8px 0 0;
-  min-height: 20px;
-  font-weight: bold;
-}
-
-.checkout-message.is-error {
-  color: #b00020;
-}
-
-.checkout-message.is-success {
-  color: #1f7a1f;
-}
 
 .last-order-card {
   margin-top: 10px;
@@ -1435,13 +1428,17 @@ button:active {
   z-index: 1100;
 }
 .confirm-modal {
-  width: min(520px, 94%);
+  display: inline-block;
+  min-width: 220px;
+  max-width: 520px;
+  width: auto;
   background: var(--color-white);
   color: var(--color-text);
   border-radius: 12px;
   padding: 18px;
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--color-border);
+  text-align: center;
 }
 .confirm-modal h3 {
   margin: 0 0 8px;
@@ -1454,9 +1451,20 @@ button:active {
 .confirm-modal .confirm-actions {
   display: flex;
   gap: 10px;
-  justify-content: flex-end;
   margin-top: 12px;
 }
+
+.confirm-modal .confirm-actions {
+  justify-content: center !important;
+}
+.confirm-modal .btn-confirm {
+  min-width: 120px;
+  padding: 12px 32px;
+  font-size: 1.1em;
+  margin: 0 auto;
+  display: block;
+}
+
 .confirm-modal .btn {
   padding: 10px 14px;
   border-radius: 8px;
