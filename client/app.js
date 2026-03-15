@@ -1,3 +1,103 @@
+// Cała logika DOM wewnątrz DOMContentLoaded
+window.addEventListener("DOMContentLoaded", () => {
+    // Pobranie elementów z HTML z bezpieczną obsługą null
+    const addButtons = document.querySelectorAll(".addToCartBtn");
+    const miniCartElement = document.querySelector(".mini-cart");
+    const cartListElement = document.getElementById("cartList");
+    const checkoutFormElement = document.getElementById("checkoutForm");
+    const checkoutSummaryListElement = document.getElementById("checkoutSummaryList");
+    const checkoutTotalElement = document.getElementById("checkoutTotal");
+    const paymentMethodElement = document.getElementById("paymentMethod");
+    const paymentInstructionsElement = document.getElementById("paymentInstructions");
+    const customerPhoneElement = document.getElementById("customerPhone");
+    const parcelLockerCodeElement = document.getElementById("parcelLockerCode");
+    const parcelSearchQueryElement = document.getElementById("parcelSearchQuery");
+    const openParcelSearchBtnElement = document.getElementById("openParcelSearchBtn");
+    const createOptionalAccountElement = document.getElementById("createOptionalAccount");
+    const optionalAccountFieldsElement = document.getElementById("optionalAccountFields");
+    const optionalAccountEmailElement = document.getElementById("optionalAccountEmail");
+    const customerNotesElement = document.getElementById("customerNotes");
+    const lastOrderCardElement = document.getElementById("lastOrderCard");
+    const lastOrderIdElement = document.getElementById("lastOrderId");
+    const lastOrderPaymentMethodElement = document.getElementById("lastOrderPaymentMethod");
+    const lastOrderTransferTitleElement = document.getElementById("lastOrderTransferTitle");
+    const lastOrderPaymentTargetLabelElement = document.getElementById("lastOrderPaymentTargetLabel");
+    const lastOrderPaymentTargetElement = document.getElementById("lastOrderPaymentTarget");
+    const lastOrderPhoneSuffixElement = document.getElementById("lastOrderPhoneSuffix");
+    const lastOrderLockerElement = document.getElementById("lastOrderLocker");
+    const copyTransferTitleBtnElement = document.getElementById("copyTransferTitleBtn");
+
+    // Sprawdzenie czy wszystkie elementy istnieją
+    if (!miniCartElement ||
+        !cartListElement ||
+        !checkoutFormElement ||
+        !checkoutSummaryListElement ||
+        !checkoutTotalElement ||
+        !paymentMethodElement ||
+        !paymentInstructionsElement ||
+        !customerPhoneElement ||
+        !parcelLockerCodeElement ||
+        !parcelSearchQueryElement ||
+        !openParcelSearchBtnElement ||
+        !createOptionalAccountElement ||
+        !optionalAccountFieldsElement ||
+        !optionalAccountEmailElement ||
+        !customerNotesElement ||
+        !lastOrderCardElement ||
+        !lastOrderIdElement ||
+        !lastOrderPaymentMethodElement ||
+        !lastOrderTransferTitleElement ||
+        !lastOrderPaymentTargetLabelElement ||
+        !lastOrderPaymentTargetElement ||
+        !lastOrderPhoneSuffixElement ||
+        !lastOrderLockerElement ||
+        !copyTransferTitleBtnElement) {
+        console.error("Nie znaleziono wymaganych elementów DOM");
+        throw new Error("Brak wymaganych elementów na stronie");
+    }
+
+    // Przypisanie do zmiennych z pewnymi typami
+    const miniCart = miniCartElement;
+    const cartList = cartListElement;
+    const checkoutForm = checkoutFormElement;
+    const checkoutSummaryList = checkoutSummaryListElement;
+    const checkoutTotal = checkoutTotalElement;
+    const paymentMethod = paymentMethodElement;
+    const paymentInstructions = paymentInstructionsElement;
+    const customerPhone = customerPhoneElement;
+    const parcelLockerCode = parcelLockerCodeElement;
+    const parcelSearchQuery = parcelSearchQueryElement;
+    const openParcelSearchBtn = openParcelSearchBtnElement;
+    const createOptionalAccount = createOptionalAccountElement;
+    const optionalAccountFields = optionalAccountFieldsElement;
+    const optionalAccountEmail = optionalAccountEmailElement;
+    const customerNotes = customerNotesElement;
+    const lastOrderCard = lastOrderCardElement;
+    const lastOrderId = lastOrderIdElement;
+    const lastOrderPaymentMethod = lastOrderPaymentMethodElement;
+    const lastOrderTransferTitle = lastOrderTransferTitleElement;
+    const lastOrderPaymentTargetLabel = lastOrderPaymentTargetLabelElement;
+    const lastOrderPaymentTarget = lastOrderPaymentTargetElement;
+    const lastOrderPhoneSuffix = lastOrderPhoneSuffixElement;
+    const lastOrderLocker = lastOrderLockerElement;
+    const copyTransferTitleBtn = copyTransferTitleBtnElement;
+
+    // Maskowanie numeru telefonu: 000 000 000
+    if (customerPhone) {
+        customerPhone.addEventListener("input", (e) => {
+            let val = customerPhone.value.replace(/\D/g, "");
+            if (val.length > 9) val = val.slice(0, 9);
+            let masked = val;
+            if (val.length > 3 && val.length <= 6) {
+                masked = val.slice(0, 3) + " " + val.slice(3);
+            } else if (val.length > 6) {
+                masked = val.slice(0, 3) + " " + val.slice(3, 6) + " " + val.slice(6);
+            }
+            customerPhone.value = masked;
+        });
+    }
+    // ...existing code...
+});
 // Tablica koszyka
 let cart = [];
 // Pobranie elementów z HTML z bezpieczną obsługą null
@@ -7,7 +107,6 @@ const cartListElement = document.getElementById("cartList");
 const checkoutFormElement = document.getElementById("checkoutForm");
 const checkoutSummaryListElement = document.getElementById("checkoutSummaryList");
 const checkoutTotalElement = document.getElementById("checkoutTotal");
-const checkoutMessageElement = document.getElementById("checkoutMessage");
 const paymentMethodElement = document.getElementById("paymentMethod");
 const paymentInstructionsElement = document.getElementById("paymentInstructions");
 const customerPhoneElement = document.getElementById("customerPhone");
@@ -33,7 +132,6 @@ if (!miniCartElement ||
     !checkoutFormElement ||
     !checkoutSummaryListElement ||
     !checkoutTotalElement ||
-    !checkoutMessageElement ||
     !paymentMethodElement ||
     !paymentInstructionsElement ||
     !customerPhoneElement ||
@@ -62,7 +160,6 @@ const cartList = cartListElement;
 const checkoutForm = checkoutFormElement;
 const checkoutSummaryList = checkoutSummaryListElement;
 const checkoutTotal = checkoutTotalElement;
-const checkoutMessage = checkoutMessageElement;
 const paymentMethod = paymentMethodElement;
 const paymentInstructions = paymentInstructionsElement;
 const customerPhone = customerPhoneElement;
@@ -163,13 +260,8 @@ const dismissToastContaining = (text) => {
         }
     });
 };
-const setCheckoutMessage = (message, isError) => {
-    checkoutMessage.innerHTML = message;
-    checkoutMessage.classList.remove("is-error", "is-success");
-    checkoutMessage.classList.add(isError ? "is-error" : "is-success");
-};
 // Show a custom confirmation modal. Returns a Promise that resolves to true if confirmed.
-const showConfirmModal = (title, message) => {
+const showConfirmModal = (title, message, singleButton = false) => {
     return new Promise((resolve) => {
         const overlay = document.createElement('div');
         overlay.className = 'confirm-modal-overlay';
@@ -185,24 +277,34 @@ const showConfirmModal = (title, message) => {
         const actions = document.createElement('div');
         actions.className = 'confirm-actions';
 
-        const btnCancel = document.createElement('button');
-        btnCancel.className = 'btn btn-cancel';
-        btnCancel.textContent = 'Anuluj';
-        btnCancel.addEventListener('click', () => {
-            document.body.removeChild(overlay);
-            resolve(false);
-        });
+        if (singleButton) {
+            const btnOk = document.createElement('button');
+            btnOk.className = 'btn btn-confirm';
+            btnOk.textContent = 'OK';
+            btnOk.addEventListener('click', () => {
+                document.body.removeChild(overlay);
+                resolve(true);
+            });
+            actions.appendChild(btnOk);
+        } else {
+            const btnCancel = document.createElement('button');
+            btnCancel.className = 'btn btn-cancel';
+            btnCancel.textContent = 'Anuluj';
+            btnCancel.addEventListener('click', () => {
+                document.body.removeChild(overlay);
+                resolve(false);
+            });
 
-        const btnConfirm = document.createElement('button');
-        btnConfirm.className = 'btn btn-confirm';
-        btnConfirm.textContent = 'Tak, wyczyść';
-        btnConfirm.addEventListener('click', () => {
-            document.body.removeChild(overlay);
-            resolve(true);
-        });
-
-        actions.appendChild(btnCancel);
-        actions.appendChild(btnConfirm);
+            const btnConfirm = document.createElement('button');
+            btnConfirm.className = 'btn btn-confirm';
+            btnConfirm.textContent = 'Tak, wyczyść';
+            btnConfirm.addEventListener('click', () => {
+                document.body.removeChild(overlay);
+                resolve(true);
+            });
+            actions.appendChild(btnCancel);
+            actions.appendChild(btnConfirm);
+        }
 
         dialog.appendChild(h);
         dialog.appendChild(p);
@@ -417,7 +519,7 @@ const renderCheckoutSummary = () => {
 const handleCheckoutSubmit = async (event) => {
     event.preventDefault();
     if (cart.length === 0) {
-        setCheckoutMessage("Koszyk jest pusty. Dodaj produkty przed złożeniem zamówienia.", true);
+        showConfirmModal("Koszyk jest pusty", "Dodaj produkty do koszyka przed złożeniem zamówienia.", true).then(() => {});
         return;
     }
     const phone = customerPhone.value.trim();
@@ -427,23 +529,35 @@ const handleCheckoutSubmit = async (event) => {
     const wantsOptionalAccount = createOptionalAccount.checked;
     const optionalEmail = optionalAccountEmail.value.trim();
     const notes = customerNotes.value.trim();
+    const phoneError = document.getElementById("phoneError");
     if (!isPhoneValid(phone)) {
-        setCheckoutMessage("Podaj poprawny numer telefonu (9 cyfr).", true);
+        if (phoneError) phoneError.textContent = "Podaj poprawny numer telefonu (9 cyfr).";
+        showToast("Podaj poprawny numer telefonu (9 cyfr).", "error");
         customerPhone.focus();
         return;
+    } else {
+        if (phoneError) phoneError.textContent = "";
     }
+    const lockerError = document.getElementById("lockerError");
     if (!isParcelLockerCodeValid(parcelLocker)) {
-        setCheckoutMessage("Podaj poprawny kod paczkomatu (np. WAW01A).", true);
+        if (lockerError) lockerError.textContent = "Podaj poprawny kod paczkomatu (np. WAW01A).";
+        showToast("Podaj poprawny kod paczkomatu (np. WAW01A).", "error");
         parcelLockerCode.focus();
         return;
+    } else {
+        if (lockerError) lockerError.textContent = "";
     }
+    const emailError = document.getElementById("emailError");
     if (wantsOptionalAccount && optionalEmail.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(optionalEmail)) {
-        setCheckoutMessage("Podaj poprawny adres e-mail do konta lub zostaw pole puste.", true);
+        if (emailError) emailError.textContent = "Podaj poprawny adres e-mail do konta lub zostaw pole puste.";
+        showToast("Podaj poprawny adres e-mail do konta lub zostaw pole puste.", "error");
         optionalAccountEmail.focus();
         return;
+    } else {
+        if (emailError) emailError.textContent = "";
     }
     // Show loading state
-    setCheckoutMessage("⏳ Wysyłanie zamówienia...", false);
+    showToast("⏳ Wysyłanie zamówienia...", "default");
     const submitBtn = checkoutForm.querySelector('button[type="submit"]');
     if (submitBtn)
         submitBtn.disabled = true;
@@ -481,10 +595,9 @@ const handleCheckoutSubmit = async (event) => {
         const paymentTarget = data.paymentTarget || getPaymentTargetText(selectedPaymentMethod);
         const paymentMethodLabel = getPaymentMethodLabel(selectedPaymentMethod);
         const paymentMessage = selectedPaymentMethod === "blik"
-            ? `✅ Zamówienie zapisane.<br><strong style="font-size: 1.2em;">Numer: ${orderRef}</strong><br><small>Metoda: ${paymentMethodLabel}. Realizacja po zaksięgowaniu wpłaty. Numer BLIK: ${paymentConfig.blikPhone}</small>`
-            : `✅ Zamówienie zapisane.<br><strong style="font-size: 1.2em;">Numer: ${orderRef}</strong><br><small>Metoda: ${paymentMethodLabel}. Realizacja po zaksięgowaniu wpłaty. Tytuł płatności: ${transferTitle}</small>`;
-        setCheckoutMessage(paymentMessage, false);
-        showToast("Zamówienie przyjęte!");
+            ? `✅ Zamówienie zapisane. Numer: ${orderRef}. Metoda: ${paymentMethodLabel}. Realizacja po zaksięgowaniu wpłaty. Numer BLIK: ${paymentConfig.blikPhone}`
+            : `✅ Zamówienie zapisane. Numer: ${orderRef}. Metoda: ${paymentMethodLabel}. Realizacja po zaksięgowaniu wpłaty. Tytuł płatności: ${transferTitle}`;
+        showToast(paymentMessage, "success");
         saveLastOrderReference({
             orderRef,
             paymentMethod: selectedPaymentMethod,
@@ -505,22 +618,11 @@ const handleCheckoutSubmit = async (event) => {
         // Clear cart
         cart = [];
         renderCart();
-            // Scroll to order message if not visible
-                setTimeout(() => {
-                    const msg = checkoutMessage;
-                    if (msg && msg.textContent && msg.textContent.trim().length > 0) {
-                        const rect = msg.getBoundingClientRect();
-                        const isVisible = rect.top >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
-                        if (!isVisible) {
-                            msg.scrollIntoView({ behavior: "smooth", block: "center" });
-                        }
-                    }
-                }, 300);
+        // Scroll to confirmation modal/toast is not needed
     }
     catch (error) {
         const errorMsg = error instanceof Error ? error.message : "Nieznany błąd";
-        setCheckoutMessage(`❌ ${errorMsg}`, true);
-        showToast("Błąd przy wysyłaniu zamówienia");
+        showToast(`❌ ${errorMsg}`, "error");
     }
     finally {
         if (submitBtn)
@@ -577,10 +679,8 @@ const clearCart = async () => {
         cart = prev;
         renderCart();
         showToast("🟢 Przywrócono koszyk", "success");
-        setCheckoutMessage("🧺 Przywrócono zawartość koszyka.", false);
     });
-
-    setCheckoutMessage("🧺 Koszyk został wyczyszczony. Możesz dodać produkty ponownie.", true);
+    showToast("🧺 Koszyk został wyczyszczony. Możesz dodać produkty ponownie.", "info");
 };
 // Funkcja zapisu koszyka do localStorage
 const saveCart = () => {
@@ -816,12 +916,10 @@ addButtons.forEach(btn => {
         else if (window.innerWidth <= 767) {
             miniCart.scrollIntoView({ behavior: "smooth", block: "center" });
         }
-                // If a 'cart cleared' message/toast is present, dismiss it when adding a new item
-                dismissToastContaining("Koszyk został wyczyszczony");
-                if (checkoutMessage.innerHTML.indexOf("Koszyk został wyczyszczony") !== -1) {
-                    setCheckoutMessage("", false);
-                }
-                showToast(`${name} dodany do koszyka!`);
+        // Usuwam komunikat o pustym koszyku przy dodaniu produktu (niepotrzebne po refaktorze)
+        // If a 'cart cleared' message/toast is present, dismiss it when adding a new item
+        dismissToastContaining("Koszyk został wyczyszczony");
+        showToast(`${name} dodany do koszyka!`);
     });
 });
 openParcelSearchBtn.addEventListener("click", () => {
